@@ -1,16 +1,12 @@
 ## Tech and major tools used in this project:
 
-- Typescript
 - React
-- Apollo Client
-- Redux
-- Express
-- NodeJS
-- NestJS
+- Typescript
 - GraphQL
-- Typeorm
-- MySQL
+- URQL / Apollo
+- Node.js
+- PostgreSQL
+- MikroORM / TypeORM
 - Redis
-- BcryptJS
-- Docker
-- Tailwind CSS
+- Next.js
+- TypeGraphQL
