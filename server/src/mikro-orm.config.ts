@@ -1,11 +1,15 @@
-import { Options } from '@mikro-orm/core';
 import { __prod__ } from "./constants";
 import { Post } from "./entities/Post";
+import { MikroORM } from "@mikro-orm/core"
+import path from "path"
 
-const config: Options =  {
+export default {
+    migrations: {
+        path: path.join(__dirname, './migrations'), // path to the folder with migrations
+        pattern: /^[\w-]+\d+\.[tj]s$/, // regex pattern for the migration files
+    },
     entities: [Post],
     dbName: "myreddit",
     type: "postgresql",
     debug: !__prod__,
-}
-export default config
+} as Parameters<typeof MikroORM.init>[0]
