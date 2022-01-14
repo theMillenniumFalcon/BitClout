@@ -1,3 +1,4 @@
+require('dotenv').config()
 import { MikroORM } from "@mikro-orm/core"
 import { __prod__ } from "./constants"
 import { Post } from "./entities/Post"
