@@ -8,7 +8,6 @@ import express from 'express'
 import { ApolloServer } from 'apollo-server-express'
 import { buildSchema } from 'type-graphql'
 import { HelloResolver } from "./resolvers/hello"
-import { PostResolver } from "./resolvers/post"
 
 const PORT = process.env.PORT || 4000
 
@@ -24,23 +23,21 @@ const main = async () => {
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [HelloResolver, PostResolver],
+            resolvers: [HelloResolver],
             validate: false
         }),
-        context: () => ({ em: orm.em })
     })
 
-    apolloServer.applyMiddleware({ app })
-
-    const server = app.listen(PORT, () => {
-        console.log(`listening on port ${PORT}`)
+    apolloServer.start().then((_) => {
+        apolloServer.applyMiddleware({ app })
+        const server = app.listen(PORT, () => {
+            console.log(`Server listening on port ${PORT}`)
+        })
+        process.on('unhandledRejection', (err, _) => {
+            console.log(`Logged Error: ${err}`)
+            server.close(() => process.exit(1))
+        })
     })
-
-    process.on('unhandledRejection', (err, _) => {
-        console.log(`Logged Error: ${err}`)
-        server.close(() => process.exit(1))
-    })
-    
 }
 main().catch((error) => {
     console.error(error)

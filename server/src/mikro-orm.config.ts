@@ -1,7 +1,7 @@
 import { __prod__ } from "./constants";
 import { Post } from "./entities/Post";
-import { MikroORM } from "@mikro-orm/core"
-import path from "path"
+import { MikroORM } from "@mikro-orm/core";
+import path from "path";
 
 export default {
     migrations: {
@@ -9,9 +9,9 @@ export default {
         pattern: /^[\w-]+\d+\.[tj]s$/, // regex pattern for the migration files
     },
     entities: [Post],
-    dbName: "notreddit",
+    dbName: process.env.DB_NAME,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
-    type: "postgresql",
+    type: process.env.DB_TYPE,
     debug: !__prod__,
 } as Parameters<typeof MikroORM.init>[0]
