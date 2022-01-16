@@ -2,7 +2,6 @@ import "reflect-metadata"
 require('dotenv').config()
 import { MikroORM } from "@mikro-orm/core"
 import { __prod__ } from "./constants"
-// import { Post } from "./entities/Post"
 import microConfig from "./mikro-orm.config"
 import express from 'express'
 import { ApolloServer } from 'apollo-server-express'
@@ -10,6 +9,10 @@ import { buildSchema } from 'type-graphql'
 import { HelloResolver } from "./resolvers/hello"
 import { PostResolver } from "./resolvers/post"
 import { UserResolver } from "./resolvers/user"
+import { createClient } from 'redis'
+import session from 'express-session'
+import connnectRedis from 'connect-redis'
+import { MyContext } from "./types"
 
 const PORT = process.env.PORT || 4000
 
@@ -18,6 +21,28 @@ const main = async () => {
     await orm.getMigrator().up()
 
     const app = express()
+
+    const RedisStore = connnectRedis(session)
+    const redisClient = createClient()
+
+    app.use(
+        session({
+            name: 'qid',
+            store: new RedisStore({
+                client: redisClient,
+                disableTouch: true,
+            }),
+            cookie: {
+                maxAge: process.env.MAX_AGE as unknown as number,
+                httpOnly: true,
+                sameSite: 'lax',
+                secure: __prod__ // * cookie only works in https
+            },
+            saveUninitialized: false,
+            secret: 'asdfghjkl',
+            resave: false,
+        })
+    )
 
     app.get('/', (_, res) => {
         res.send("Server is working fine!")
@@ -29,7 +54,7 @@ const main = async () => {
             validate: false
         }),
         // * context is an object that is accessible to all the resolvers
-        context: () => ({ em: orm.em })
+        context: ({ req, res }): MyContext => ({ em: orm.em, req, res })
     })
 
     apolloServer.start().then((_) => {

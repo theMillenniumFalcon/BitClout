@@ -35,7 +35,7 @@ export class UserResolver {
     @Mutation(() => UserResponse)
     async register(
         @Arg('options', () => UsernamePasswordInput) options: UsernamePasswordInput,
-        @Ctx() ctx: MyContext
+        @Ctx() { em }: MyContext
     ): Promise<UserResponse> {
         if (options.username.length <= 2) {
             return {
@@ -55,9 +55,9 @@ export class UserResolver {
             }
         }
         const hashedPassword = await argon2.hash(options.password)
-        const user = ctx.em.create(User, {username: options.username, password: hashedPassword})
+        const user = em.create(User, {username: options.username, password: hashedPassword})
         try {
-            await ctx.em.persistAndFlush(user)
+            await em.persistAndFlush(user)
         } catch (err) {
             // * duplicate username error
             if (err.code === process.env.ERR_CODE) {
@@ -77,9 +77,9 @@ export class UserResolver {
     @Mutation(() => UserResponse)
     async login(
         @Arg('options', () => UsernamePasswordInput) options: UsernamePasswordInput,
-        @Ctx() ctx: MyContext
+        @Ctx() { em, req }: MyContext
     ): Promise<UserResponse> {
-        const user = await ctx.em.findOne(User, {username: options.username.toLowerCase()})
+        const user = await em.findOne(User, {username: options.username.toLowerCase()})
         if (!user) {
            return {
                errors: [{
@@ -97,6 +97,8 @@ export class UserResolver {
                 }]
             }
         }
+
+        req.session!.userId = user.id
 
         return {user}
     }
