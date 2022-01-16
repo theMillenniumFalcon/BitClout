@@ -10,3 +10,4 @@
 - Redis
 - Next.js
 - TypeGraphQL
+- Node-argon2 --> for hashing
