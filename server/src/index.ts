@@ -13,6 +13,7 @@ import redis from 'redis'
 import session from 'express-session'
 import connnectRedis from 'connect-redis'
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core"
+import cors from 'cors'
 
 const PORT = process.env.PORT || 4000
 
@@ -24,6 +25,10 @@ const main = async () => {
 
     const RedisStore = connnectRedis(session)
     const redisClient = redis.createClient()
+    app.use(cors({
+        origin: 'http://localhost:3000', 
+        credentials: true 
+    }))
 
     redisClient.on("error", (err) => {
         console.log("Error " + err);
@@ -63,7 +68,7 @@ const main = async () => {
     })
 
     apolloServer.start().then((_) => {
-        apolloServer.applyMiddleware({ app })
+        apolloServer.applyMiddleware({ app, cors: { origin: false }})
         const server = app.listen(PORT, () => {
             console.log(`Server listening on port ${PORT}`)
         })
