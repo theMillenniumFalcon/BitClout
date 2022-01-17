@@ -1,5 +1,8 @@
 server/node_modules
 server/dist
 server/.env
+server/build
+
 client/node_modules
 client/.next
+client/build
