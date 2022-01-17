@@ -12,6 +12,7 @@ import { UserResolver } from "./resolvers/user"
 import redis from 'redis'
 import session from 'express-session'
 import connnectRedis from 'connect-redis'
+import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core"
 
 const PORT = process.env.PORT || 4000
 
@@ -35,7 +36,7 @@ const main = async () => {
                 disableTouch: true,
             }),
             cookie: {
-                maxAge: process.env.MAX_AGE as unknown as number,
+                maxAge: Number(process.env.SESS_EXPIRY),
                 httpOnly: true,
                 sameSite: 'lax', // * csrf
                 secure: __prod__ // * cookie only works in https
@@ -55,7 +56,10 @@ const main = async () => {
             validate: false
         }),
         // * context is an object that is accessible to all the resolvers
-        context: ({ req, res }) => ({ em: orm.em, req, res })
+        context: ({ req, res }) => ({ em: orm.em, req, res }),
+        plugins: [
+            ApolloServerPluginLandingPageGraphQLPlayground(),
+          ],
     })
 
     apolloServer.start().then((_) => {
