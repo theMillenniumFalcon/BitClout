@@ -12,4 +12,5 @@
 - TypeGraphQL
 - Node-argon2 --> for hashing
 - GraphQL Code Generator
+- knexjs
 - Joi
