@@ -1,9 +1,10 @@
-import styles from '../styles/Home.module.scss'
+import NavBar from '../components/Navbar'
 
 export default function Home() {
   return (
-    <div className={styles.container}>
-      Hello
-    </div>
+    <>
+      <NavBar />
+      <div>Hello World</div>
+    </>
   )
 }
