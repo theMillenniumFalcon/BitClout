@@ -9,7 +9,7 @@ import { buildSchema } from 'type-graphql'
 import { HelloResolver } from "./resolvers/hello"
 import { PostResolver } from "./resolvers/post"
 import { UserResolver } from "./resolvers/user"
-import { createClient } from 'redis'
+import redis from 'redis'
 import session from 'express-session'
 import connnectRedis from 'connect-redis'
 
@@ -22,10 +22,13 @@ const main = async () => {
     const app = express()
 
     const RedisStore = connnectRedis(session)
-    const redisClient = createClient()
+    const redisClient = redis.createClient()
 
-    app.use(
-        session({
+    redisClient.on("error", (err) => {
+        console.log("Error " + err);
+    });
+
+    app.use(session({
             name: 'qid',
             store: new RedisStore({
                 client: redisClient,
@@ -34,14 +37,13 @@ const main = async () => {
             cookie: {
                 maxAge: process.env.MAX_AGE as unknown as number,
                 httpOnly: true,
-                sameSite: 'lax',
+                sameSite: 'lax', // * csrf
                 secure: __prod__ // * cookie only works in https
             },
             saveUninitialized: false,
-            secret: 'asdfghjkl',
+            secret: process.env.SECRET as string,
             resave: false,
-        })
-    )
+        }))
 
     app.get('/', (_, res) => {
         res.send("Server is working fine!")
