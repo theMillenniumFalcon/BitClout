@@ -12,7 +12,6 @@ import { UserResolver } from "./resolvers/user"
 import { createClient } from 'redis'
 import session from 'express-session'
 import connnectRedis from 'connect-redis'
-import { MyContext } from "./types"
 
 const PORT = process.env.PORT || 4000
 
@@ -54,7 +53,7 @@ const main = async () => {
             validate: false
         }),
         // * context is an object that is accessible to all the resolvers
-        context: ({ req, res }): MyContext => ({ em: orm.em, req, res })
+        context: ({ req, res }) => ({ em: orm.em, req, res })
     })
 
     apolloServer.start().then((_) => {
