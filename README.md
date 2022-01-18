@@ -14,3 +14,4 @@
 - GraphQL Code Generator
 - knexjs
 - Joi
+- Framer Motion
