@@ -2,7 +2,7 @@ import { User } from "../entities/User";
 import { Arg, Field, InputType, Mutation, Resolver, Ctx, ObjectType, Query } from "type-graphql";
 import { MyContext } from "../types";
 import argon2 from 'argon2'
-import { EntityManager} from '@mikro-orm/postgresql'
+import { EntityManager } from '@mikro-orm/postgresql'
 import { COOKIE_NAME } from "../constants";
 
 @InputType()
@@ -25,17 +25,17 @@ class FieldError {
 
 @ObjectType()
 class UserResponse {
-    @Field(() => [FieldError], {nullable: true})
+    @Field(() => [FieldError], { nullable: true })
     errors?: FieldError[]
 
-    @Field(() => User, {nullable: true})
+    @Field(() => User, { nullable: true })
     user?: User
 }
 
 @Resolver()
 export class UserResolver {
-    @Query(() => User, {nullable: true})
-    async me (@Ctx() { em, req }: MyContext) {
+    @Query(() => User, { nullable: true })
+    async me(@Ctx() { em, req }: MyContext) {
         // * you are not logged in
         if (!req.session.userId) {
             return null
@@ -70,7 +70,7 @@ export class UserResolver {
         let user
         try {
             const result = await (em as EntityManager).createQueryBuilder(User).getKnexQuery().insert({
-                username: options.username, 
+                username: options.username,
                 password: hashedPassword,
                 created_at: new Date(),
                 updated_at: new Date()
@@ -92,8 +92,8 @@ export class UserResolver {
         // * this will set a cookie on the user
         // * keep them logged in
         req.session.userId = user.id
-        
-        return {user}
+
+        return { user }
     }
 
     @Mutation(() => UserResponse)
@@ -101,14 +101,14 @@ export class UserResolver {
         @Arg('options', () => UsernamePasswordInput) options: UsernamePasswordInput,
         @Ctx() { em, req }: MyContext
     ): Promise<UserResponse> {
-        const user = await em.findOne(User, {username: options.username.toLowerCase()})
+        const user = await em.findOne(User, { username: options.username.toLowerCase() })
         if (!user) {
-           return {
-               errors: [{
-                   field: 'username',
-                   message: "that username doesn't exist"
-               }]
-           } 
+            return {
+                errors: [{
+                    field: 'username',
+                    message: "that username doesn't exist"
+                }]
+            }
         }
         const validPassword = await argon2.verify(user.password, options.password)
         if (!validPassword) {
@@ -122,21 +122,20 @@ export class UserResolver {
 
         req.session.userId = user.id
 
-        return {user}
+        return { user }
     }
 
     @Mutation(() => Boolean)
-    logout(
-        @Ctx() { req, res }: MyContext
-    ) {
-        return new Promise((resolve) => req.session.destroy((err) => {
-            res.clearCookie(COOKIE_NAME)
-            if (err) {
-                console.log(err)
-                resolve(false)
-                return
-            }
-            resolve(true)
-        }))
+    logout(@Ctx() { req, res }: MyContext) {
+        return new Promise((resolve) =>
+            req.session.destroy((err) => {
+                res.clearCookie(COOKIE_NAME)
+                if (err) {
+                    console.log(err)
+                    resolve(false)
+                    return
+                }
+                resolve(true)
+            }))
     }
 }
