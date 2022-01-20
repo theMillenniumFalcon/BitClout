@@ -16,7 +16,7 @@ const Login: React.FC<loginProps> = ({}) => {
     const [, login] = useLoginMutation()
     return (
         <Wrapper variant="small">
-            <Formik initialValues={{ username: "", password: "" }} 
+            <Formik initialValues={{ usernameOrEmail: "", password: "" }} 
             onSubmit={async (values, {setErrors}) => {
                 const response = await login(values)
                 // * The errors we get from graphql are:
@@ -30,7 +30,7 @@ const Login: React.FC<loginProps> = ({}) => {
             }}>
                 {({ isSubmitting }) => (
                     <Form>
-                        <InputField name="username" placeholder="username" label="Username" />
+                        <InputField name="usernameOrEmail" placeholder="username or email" label="Username or Email" />
                         <Box mt={4}>
                             <InputField name="password" placeholder="password" label="Password" type="password" />
                         </Box>

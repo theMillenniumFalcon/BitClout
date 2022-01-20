@@ -3,9 +3,11 @@ import { Arg, Field, Mutation, Resolver, Ctx, ObjectType, Query } from "type-gra
 import { MyContext } from "../types";
 import argon2 from 'argon2'
 import { EntityManager } from '@mikro-orm/postgresql'
-import { COOKIE_NAME } from "../constants";
+import { COOKIE_NAME, FORGOT_PASSWORD_PREFIX } from "../constants";
 import { UsernamePasswordInput } from "./UsernamePasswordInput";
 import { validateRegister } from "../utils/validateRegister";
+import { sendEmail } from "../utils/sendEmail";
+import {v4} from "uuid"
 
 @ObjectType()
 class FieldError {
@@ -30,9 +32,21 @@ export class UserResolver {
     @Mutation(() => Boolean)
     async forgotPassword(
         @Arg('email') email: string,
-        @Ctx() { em }: MyContext
+        @Ctx() { em, redis }: MyContext
     ) {
-        // const user = await em.findOne(User, { email })
+        const user = await em.findOne(User, { email })
+        if (!user) {
+            // * the email is not in the database
+            return true
+        }
+
+        const token = v4()
+
+        await redis.set(FORGOT_PASSWORD_PREFIX + token, user.id, 'ex', Number(process.env.TOKEN_EXPIRY))
+
+        await sendEmail(email, 
+            `<a href="http://localhost:3000/change-password/${token}">Reset Password</a>`
+        )
         return true
     }
 
@@ -101,7 +115,7 @@ export class UserResolver {
         if (!user) {
             return {
                 errors: [{
-                    field: 'username',
+                    field: 'usernameOrEmail',
                     message: "that username doesn't exist"
                 }]
             }

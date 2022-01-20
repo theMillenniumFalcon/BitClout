@@ -9,7 +9,7 @@ import { buildSchema } from 'type-graphql'
 import { HelloResolver } from "./resolvers/hello"
 import { PostResolver } from "./resolvers/post"
 import { UserResolver } from "./resolvers/user"
-import redis from 'redis'
+import Redis from 'ioredis'
 import session from 'express-session'
 import connnectRedis from 'connect-redis'
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core"
@@ -25,20 +25,20 @@ const main = async () => {
     const app = express()
 
     const RedisStore = connnectRedis(session)
-    const redisClient = redis.createClient()
+    const redis = Redis()
     app.use(cors({
         origin: 'http://localhost:3000', 
         credentials: true 
     }))
 
-    redisClient.on("error", (err) => {
+    redis.on("error", (err) => {
         console.log("Error " + err);
     });
 
     app.use(session({
             name: COOKIE_NAME,
             store: new RedisStore({
-                client: redisClient,
+                client: redis,
                 disableTouch: true,
             }),
             cookie: {
@@ -62,7 +62,7 @@ const main = async () => {
             validate: false
         }),
         // * context is an object that is accessible to all the resolvers
-        context: ({ req, res }) => ({ em: orm.em, req, res }),
+        context: ({ req, res }) => ({ em: orm.em, req, res, redis }),
         plugins: [
             ApolloServerPluginLandingPageGraphQLPlayground(),
           ],
