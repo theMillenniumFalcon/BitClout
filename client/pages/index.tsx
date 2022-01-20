@@ -3,7 +3,6 @@ import NavBar from "../components/NavBar";
 import { usePostsQuery } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 
-
 const Home = () => {
   const [{ data }] = usePostsQuery()
   return (
