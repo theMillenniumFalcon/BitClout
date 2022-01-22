@@ -3,14 +3,14 @@
 - React
 - Typescript
 - GraphQL
-- URQL / Apollo
+- Apollo
 - Node.js
 - PostgreSQL
-- MikroORM / TypeORM
+- TypeORM
 - Redis
 - Next.js
 - TypeGraphQL
-- Node-argon2 --> for hashing
+- Node-argon2
 - GraphQL Code Generator
 - knexjs
 - Joi
