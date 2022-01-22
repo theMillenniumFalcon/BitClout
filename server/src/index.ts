@@ -25,7 +25,7 @@ const main = async () => {
     const app = express()
 
     const RedisStore = connnectRedis(session)
-    const redis = Redis()
+    const redis = new Redis()
     app.use(cors({
         origin: 'http://localhost:3000', 
         credentials: true 
