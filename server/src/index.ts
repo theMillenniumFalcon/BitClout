@@ -1,8 +1,6 @@
 import "reflect-metadata"
 require('dotenv').config()
-import { MikroORM } from "@mikro-orm/core"
 import { COOKIE_NAME, __prod__ } from "./constants"
-import microConfig from "./mikro-orm.config"
 import express from 'express'
 import { ApolloServer } from 'apollo-server-express'
 import { buildSchema } from 'type-graphql'
@@ -14,13 +12,23 @@ import session from 'express-session'
 import connnectRedis from 'connect-redis'
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core"
 import cors from 'cors'
+import {createConnection} from 'typeorm'
+import { User } from "./entities/User"
+import { Post } from "./entities/Post"
 
 const PORT = process.env.PORT || 4000
 
 const main = async () => {
 
-    const orm = await MikroORM.init(microConfig)
-    await orm.getMigrator().up()
+    const connection = await createConnection({
+        type: "postgres",
+        username: "postgres",
+        password: "postgres",
+        database: "myreddit",
+        logging: true,
+        synchronize: true,
+        entities: [Post, User]
+    })
 
     const app = express()
 
@@ -28,7 +36,7 @@ const main = async () => {
     const redis = new Redis()
     app.use(cors({
         origin: 'http://localhost:3000', 
-        credentials: true 
+        credentials: true
     }))
 
     redis.on("error", (err) => {
@@ -62,7 +70,7 @@ const main = async () => {
             validate: false
         }),
         // * context is an object that is accessible to all the resolvers
-        context: ({ req, res }) => ({ em: orm.em, req, res, redis }),
+        context: ({ req, res }) => ({ req, res, redis }),
         plugins: [
             ApolloServerPluginLandingPageGraphQLPlayground(),
           ],
