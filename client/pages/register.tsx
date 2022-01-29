@@ -8,7 +8,6 @@ import { toErrormap } from '../utils/toErrorMap'
 import { useRouter } from 'next/router'
 import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../utils/createUrqlClient'
-import Layout from '../components/Layout'
 
 interface registerProps {}
 
@@ -16,7 +15,7 @@ const Register: React.FC<registerProps> = ({}) => {
     const router = useRouter()
     const [, register] = useRegisterMutation()
     return (
-        <Layout>
+        <Wrapper variant="small">
             <Formik initialValues={{ email: "", username: "", password: "" }} 
             onSubmit={async (values, {setErrors}) => {
                 const response = await register({ options: values })
@@ -42,7 +41,7 @@ const Register: React.FC<registerProps> = ({}) => {
                     </Form>
                 )}
             </Formik>
-        </Layout>
+        </Wrapper>
     )
 }
 

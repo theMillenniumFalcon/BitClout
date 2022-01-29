@@ -9,7 +9,6 @@ import { useRouter } from 'next/router'
 import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../utils/createUrqlClient'
 import NextLink from 'next/link'
-import Layout from '../components/Layout'
 
 interface loginProps { }
 
@@ -17,7 +16,7 @@ const Login: React.FC<loginProps> = ({ }) => {
     const router = useRouter()
     const [, login] = useLoginMutation()
     return (
-        <Layout>
+        <Wrapper variant="small">
             <Formik initialValues={{ usernameOrEmail: "", password: "" }}
                 onSubmit={async (values, { setErrors }) => {
                     const response = await login(values)
@@ -26,8 +25,12 @@ const Login: React.FC<loginProps> = ({ }) => {
                     if (response.data?.login.errors) { // * this is optional chaining
                         setErrors(toErrormap(response.data.login.errors))
                     } else if (response.data?.login.user) {
-                        // * worked
-                        router.push('/')
+                        if (typeof router.query.next === 'string') {
+                            router.push(router.query.next)
+                        } else {
+                            // * worked
+                            router.push('/')
+                        }
                     }
                 }}>
                 {({ isSubmitting }) => (
@@ -47,7 +50,7 @@ const Login: React.FC<loginProps> = ({ }) => {
                     </Form>
                 )}
             </Formik>
-        </Layout>
+        </Wrapper>
     )
 }
 
