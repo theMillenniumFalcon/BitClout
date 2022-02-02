@@ -31,7 +31,7 @@ const main = async () => {
         migrations: [path.join(__dirname, "./migrations/*")],
         entities: [Post, User]
     })
-    await connection.runMigrations()
+    // await connection.runMigrations()
 
     // await Post.delete({})
 
