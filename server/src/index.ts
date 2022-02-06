@@ -12,25 +12,11 @@ import session from 'express-session'
 import connnectRedis from 'connect-redis'
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core"
 import cors from 'cors'
-import {createConnection} from 'typeorm'
-import { User } from "./entities/User"
-import { Post } from "./entities/Post"
-import path from "path"
 
 const PORT = process.env.PORT || 4000
 
 const main = async () => {
 
-    const connection = await createConnection({
-        type: "postgres",
-        username: "postgres",
-        password: "postgres",
-        database: "myreddit",
-        logging: true,
-        synchronize: true,
-        migrations: [path.join(__dirname, "./migrations/*")],
-        entities: [Post, User]
-    })
     // await connection.runMigrations()
 
     // await Post.delete({})
