@@ -4,7 +4,7 @@ import { Post } from "./Post";
 
 @ObjectType() // * to convert the class to a graphql type
 @Entity()
-export class User extends BaseEntity{
+export class User extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
   id!: number;

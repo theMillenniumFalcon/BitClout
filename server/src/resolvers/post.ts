@@ -47,11 +47,12 @@ export class PostResolver {
         @Arg('input') input: PostInput,
         @Ctx() { req }: MyContext
     ): Promise<Post> {
-
+        let post
         return Post.create({
             ...input,
             creatorId: req.session.userId
         }).save()
+        
     }
 
     @Mutation(() => Post, { nullable: true })

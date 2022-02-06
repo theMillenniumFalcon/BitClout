@@ -7,6 +7,7 @@ import { UsernamePasswordInput } from "./UsernamePasswordInput";
 import { validateRegister } from "../utils/validateRegister";
 import { sendEmail } from "../utils/sendEmail";
 import { v4 } from "uuid"
+import {getConnection} from "typeorm"
 
 @ObjectType()
 class FieldError {
@@ -114,19 +115,24 @@ export class UserResolver {
 
     @Mutation(() => UserResponse)
     async register(
-        @Arg('options', () => UsernamePasswordInput) options: UsernamePasswordInput,
+        @Arg('options') options: UsernamePasswordInput,
         @Ctx() { req }: MyContext
     ): Promise<UserResponse> {
         const errors = validateRegister(options)
         if (errors) {
             return { errors }
         }
-        
+
+        const hashedPassword = await argon2.hash(options.password)
         let user
         try {
-            User.create({}).save()
+            const result = await getConnection().createQueryBuilder().insert().into(User).values({
+                username: options.username,
+                email: options.email,
+                password: hashedPassword
+            }).returning('*').execute()
+            user = result.raw[0]
         } catch (err) {
-            console.log('err: ', err)
             // * duplicate username error
             if (err.code === process.env.ERR_CODE) {
                 return {

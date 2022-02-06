@@ -2,7 +2,7 @@
   {
     "name": "server",
     "type": "postgres",
-    "synchronize": true,
+    "synchronize": false,
     "logging": true
   },
   {
