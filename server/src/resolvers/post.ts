@@ -1,7 +1,7 @@
 import { Post } from "../entities/Post";
-import { Arg, Ctx, Field, InputType, Int, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
+import { Arg, Ctx, Field, InputType, Mutation, Query, Int, Resolver, UseMiddleware } from "type-graphql";
 import { MyContext } from "../types";
-import { isAuth } from "../middleware/isAuth";
+import { Authentication } from "../middleware/Authentication";
 import { getConnection } from "typeorm";
 
 @InputType()
@@ -34,6 +34,11 @@ export class PostResolver {
             return queryBuilder.getMany()
     }
 
+    // @Query(() => Post, { nullable: true })
+    // async posts(): Promise<Post[]> {
+    //     return Post.find()
+    // }
+
     @Query(() => Post, { nullable: true })
     post(
         @Arg('id') id: number
@@ -42,12 +47,11 @@ export class PostResolver {
     }
 
     @Mutation(() => Post)
-    @UseMiddleware(isAuth)
+    @UseMiddleware(Authentication)
     async createPost(
         @Arg('input') input: PostInput,
         @Ctx() { req }: MyContext
     ): Promise<Post> {
-        let post
         return Post.create({
             ...input,
             creatorId: req.session.userId

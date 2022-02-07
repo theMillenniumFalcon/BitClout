@@ -14,7 +14,6 @@ const Layout: React.FC<layoutprops> = ({ children, variant='regular' }) => {
             {children}
         </Wrapper>
         </>
-        
     )
 }
 

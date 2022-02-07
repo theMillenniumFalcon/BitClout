@@ -32,7 +32,7 @@ const main = async () => {
         entities: [Post, User]
     })
 
-    // await connection.runMigrations()
+    await connection.runMigrations()
 
     // await User.delete({})
 
@@ -56,13 +56,13 @@ const main = async () => {
                 disableTouch: true,
             }),
             cookie: {
-                maxAge: Number(process.env.SESS_EXPIRY),
+                maxAge: 1000*60*60*24*365*10,
                 httpOnly: true,
                 sameSite: 'lax', // * csrf
                 secure: __prod__ // * cookie only works in https
             },
             saveUninitialized: false,
-            secret: process.env.SECRET as string,
+            secret: "asdfghjklqwertyuiopasdfghjkl",
             resave: false,
         }))
 
