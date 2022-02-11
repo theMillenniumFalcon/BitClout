@@ -23,9 +23,9 @@ const main = async () => {
 
     const connection = await createConnection({
         type: "postgres",
-        username: "postgres",
-        password: "postgres",
-        database: "myreddit",
+        username: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
         logging: true,
         synchronize: false,
         migrations: [path.join(__dirname, "./migrations/*")],
@@ -41,6 +41,7 @@ const main = async () => {
 
     const RedisStore = connnectRedis(session)
     const redis = new Redis()
+
     app.use(cors({
         origin: 'http://localhost:3000',
         credentials: true
@@ -48,22 +49,23 @@ const main = async () => {
 
     redis.on("error", (err) => {
         console.log("Error " + err);
-    });
+    })
 
     app.use(session({
         name: COOKIE,
         store: new RedisStore({
             client: redis,
+            disableTTL: true,
             disableTouch: true,
         }),
         cookie: {
-            maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
+            maxAge: 1000 * 60 * 60 * 24 * 365 * 1,
             httpOnly: true,
-            sameSite: 'lax', // * csrf
+            sameSite: 'lax', // * protecting csrf
             secure: __prod__ // * cookie only works in https
         },
         saveUninitialized: false,
-        secret: "asdfghjklqwertyuiopasdfghjkl",
+        secret: process.env.SESSION_SECRET as string,
         resave: false,
     }))
 

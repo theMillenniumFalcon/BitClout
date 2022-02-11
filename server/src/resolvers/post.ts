@@ -1,17 +1,8 @@
 import { Post } from "../entities/Post";
-import { Arg, Ctx, Field, InputType, Mutation, Query, Int, Resolver, UseMiddleware } from "type-graphql";
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
 import { Context } from "../types/types";
 import { Authentication } from "../middleware/Authentication";
-import { getConnection } from "typeorm";
-
-@InputType()
-class PostInput {
-    @Field()
-    title: string;
-
-    @Field()
-    text: string;
-}
+import { PostInput } from "../utils/PostInput";
 
 @Resolver()
 export class PostResolver {

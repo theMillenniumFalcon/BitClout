@@ -1,31 +1,14 @@
 import { User } from "../entities/User";
-import { Arg, Field, Mutation, Resolver, Ctx, ObjectType, Query } from "type-graphql";
+import { Arg, Mutation, Resolver, Ctx, Query } from "type-graphql";
 import { Context } from "../types/types";
 import argon2 from 'argon2'
 import { COOKIE, FORGOT_PASSWORD_PREFIX } from "../constants/constants";
-import { UsernamePasswordInput } from "./UsernamePasswordInput";
+import { UserInput } from "../utils/UserInput";
 import { validateRegister } from "../utils/validateRegister";
 import { sendEmail } from "../utils/sendEmail";
 import { v4 } from "uuid"
-import {getConnection} from "typeorm"
-
-@ObjectType()
-class FieldError {
-    @Field()
-    field: string
-
-    @Field()
-    message: string
-}
-
-@ObjectType()
-class UserResponse {
-    @Field(() => [FieldError], { nullable: true })
-    errors?: FieldError[]
-
-    @Field(() => User, { nullable: true })
-    user?: User
-}
+import { getConnection } from "typeorm"
+import { UserResponse } from "../errors/UserResponse";
 
 @Resolver()
 export class UserResolver {
@@ -73,7 +56,7 @@ export class UserResolver {
             }
         }
 
-        await User.update({ id: userIdNum}, { password: await argon2.hash(newPassword) })
+        await User.update({ id: userIdNum }, { password: await argon2.hash(newPassword) })
 
         await redis.del(key)
 
@@ -88,7 +71,7 @@ export class UserResolver {
         @Arg('email') email: string,
         @Ctx() { redis }: Context
     ) {
-        const user = await User.findOne({ where: { email }})
+        const user = await User.findOne({ where: { email } })
         if (!user) {
             // * the email is not in the database
             return true
@@ -105,8 +88,8 @@ export class UserResolver {
     }
 
     @Query(() => User, { nullable: true })
-    me(@Ctx() { req }: Context) {
-        // * you are not logged in
+    userLoggedIn(@Ctx() { req }: Context) {
+        // * if you are not logged in
         if (!req.session.userId) {
             return null
         }
@@ -115,7 +98,7 @@ export class UserResolver {
 
     @Mutation(() => UserResponse)
     async register(
-        @Arg('options') options: UsernamePasswordInput,
+        @Arg('options') options: UserInput,
         @Ctx() { req }: Context
     ): Promise<UserResponse> {
         const errors = validateRegister(options)
@@ -134,7 +117,7 @@ export class UserResolver {
             user = result.raw[0]
         } catch (err) {
             // * duplicate username error
-            if (err.code === process.env.ERR_CODE) {
+            if (err.code === process.env.DUPLICATE_ERROR_CODE) {
                 return {
                     errors: [{
                         field: 'username',
