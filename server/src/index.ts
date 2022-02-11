@@ -27,7 +27,7 @@ const main = async () => {
         password: "postgres",
         database: "reddit",
         logging: true,
-        synchronize: true,
+        synchronize: false,
         migrations: [path.join(__dirname, "./migrations/*")],
         entities: [Post, User]
     })
@@ -35,6 +35,7 @@ const main = async () => {
     await connection.runMigrations()
 
     // await User.delete({})
+    // await Post.delete({})
 
     const app = express()
 
