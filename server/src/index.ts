@@ -1,10 +1,10 @@
 import "reflect-metadata"
 require('dotenv').config()
-import { COOKIE_NAME, __prod__ } from "./constants/constants"
+import { COOKIE, __prod__ } from "./constants/constants"
 import express from 'express'
 import { ApolloServer } from 'apollo-server-express'
 import { buildSchema } from 'type-graphql'
-import { HelloResolver } from "./resolvers/hello"
+import { TestResolver } from "./resolvers/test"
 import { PostResolver } from "./resolvers/post"
 import { UserResolver } from "./resolvers/user"
 import Redis from 'ioredis'
@@ -12,7 +12,7 @@ import session from 'express-session'
 import connnectRedis from 'connect-redis'
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core"
 import cors from 'cors'
-import {createConnection} from 'typeorm'
+import { createConnection } from 'typeorm'
 import { User } from "./entities/User"
 import { Post } from "./entities/Post"
 import path from "path"
@@ -32,7 +32,7 @@ const main = async () => {
         entities: [Post, User]
     })
 
-    // await connection.runMigrations()
+    await connection.runMigrations()
 
     // await User.delete({})
     // await Post.delete({})
@@ -51,21 +51,21 @@ const main = async () => {
     });
 
     app.use(session({
-            name: COOKIE_NAME,
-            store: new RedisStore({
-                client: redis,
-                disableTouch: true,
-            }),
-            cookie: {
-                maxAge: 1000*60*60*24*365*10,
-                httpOnly: true,
-                sameSite: 'lax', // * csrf
-                secure: __prod__ // * cookie only works in https
-            },
-            saveUninitialized: false,
-            secret: "asdfghjklqwertyuiopasdfghjkl",
-            resave: false,
-        }))
+        name: COOKIE,
+        store: new RedisStore({
+            client: redis,
+            disableTouch: true,
+        }),
+        cookie: {
+            maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
+            httpOnly: true,
+            sameSite: 'lax', // * csrf
+            secure: __prod__ // * cookie only works in https
+        },
+        saveUninitialized: false,
+        secret: "asdfghjklqwertyuiopasdfghjkl",
+        resave: false,
+    }))
 
     app.get('/', (_, res) => {
         res.send("Server is working fine!")
@@ -73,18 +73,18 @@ const main = async () => {
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [HelloResolver, PostResolver, UserResolver],
+            resolvers: [TestResolver, PostResolver, UserResolver],
             validate: false
         }),
         // * context is an object that is accessible to all the resolvers
         context: ({ req, res }) => ({ req, res, redis }),
         plugins: [
             ApolloServerPluginLandingPageGraphQLPlayground(),
-          ],
+        ],
     })
 
     apolloServer.start().then((_) => {
-        apolloServer.applyMiddleware({ app, cors: { origin: false }})
+        apolloServer.applyMiddleware({ app, cors: { origin: false } })
         const server = app.listen(PORT, () => {
             console.log(`Server listening on port ${PORT}`)
         })

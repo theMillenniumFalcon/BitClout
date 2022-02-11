@@ -1,6 +1,6 @@
 import { Post } from "../entities/Post";
 import { Arg, Ctx, Field, InputType, Mutation, Query, Int, Resolver, UseMiddleware } from "type-graphql";
-import { MyContext } from "../types/types";
+import { Context } from "../types/types";
 import { Authentication } from "../middleware/Authentication";
 import { getConnection } from "typeorm";
 
@@ -15,29 +15,29 @@ class PostInput {
 
 @Resolver()
 export class PostResolver {
-    @Query(() => [Post])
-    async posts(
-        @Arg('limit', () => Int) limit: number,
-        @Arg('cursor', () => String, { nullable: true }) cursor: string | null
-    ): Promise<Post[]> {
-        const realLimit = Math.min(50, limit)
-            const queryBuilder = getConnection()
-                .getRepository(Post)
-                .createQueryBuilder("p")
-                .where('"createdAt" < :cursor', { cursor })
-                .orderBy('"createdAt"', "DESC")
-                .take(realLimit)
-            if (cursor) {
-                queryBuilder.where('"createdAt" < :cursor', { cursor: new Date(parseInt(cursor)) })
-            }
+    // @Query(() => [Post])
+    // async posts(
+    //     @Arg('limit', () => Int) limit: number,
+    //     @Arg('cursor', () => String, { nullable: true }) cursor: string | null
+    // ): Promise<Post[]> {
+    //     const realLimit = Math.min(50, limit)
+    //         const queryBuilder = getConnection()
+    //             .getRepository(Post)
+    //             .createQueryBuilder("p")
+    //             .where('"createdAt" < :cursor', { cursor })
+    //             .orderBy('"createdAt"', "DESC")
+    //             .take(realLimit)
+    //         if (cursor) {
+    //             queryBuilder.where('"createdAt" < :cursor', { cursor: new Date(parseInt(cursor)) })
+    //         }
 
-            return queryBuilder.getMany()
-    }
-
-    // @Query(() => Post, { nullable: true })
-    // async posts(): Promise<Post[]> {
-    //     return Post.find()
+    //         return queryBuilder.getMany()
     // }
+
+    @Query(() => Post, { nullable: true })
+    async posts(): Promise<Post[]> {
+        return Post.find()
+    }
 
     @Query(() => Post, { nullable: true })
     post(
@@ -50,13 +50,13 @@ export class PostResolver {
     @UseMiddleware(Authentication)
     async createPost(
         @Arg('input') input: PostInput,
-        @Ctx() { req }: MyContext
+        @Ctx() { req }: Context
     ): Promise<Post> {
         return Post.create({
             ...input,
             creatorId: req.session.userId
         }).save()
-        
+
     }
 
     @Mutation(() => Post, { nullable: true })
