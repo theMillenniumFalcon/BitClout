@@ -1,6 +1,6 @@
 import "reflect-metadata"
 require('dotenv').config()
-import { COOKIE_NAME, __prod__ } from "./constants"
+import { COOKIE_NAME, __prod__ } from "./constants/constants"
 import express from 'express'
 import { ApolloServer } from 'apollo-server-express'
 import { buildSchema } from 'type-graphql'
@@ -25,14 +25,14 @@ const main = async () => {
         type: "postgres",
         username: "postgres",
         password: "postgres",
-        database: "reddit",
+        database: "myreddit",
         logging: true,
         synchronize: false,
         migrations: [path.join(__dirname, "./migrations/*")],
         entities: [Post, User]
     })
 
-    await connection.runMigrations()
+    // await connection.runMigrations()
 
     // await User.delete({})
     // await Post.delete({})
@@ -42,7 +42,7 @@ const main = async () => {
     const RedisStore = connnectRedis(session)
     const redis = new Redis()
     app.use(cors({
-        origin: 'http://localhost:3000', 
+        origin: 'http://localhost:3000',
         credentials: true
     }))
 

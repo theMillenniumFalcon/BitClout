@@ -1,8 +1,8 @@
 import { User } from "../entities/User";
 import { Arg, Field, Mutation, Resolver, Ctx, ObjectType, Query } from "type-graphql";
-import { MyContext } from "../types";
+import { MyContext } from "../types/types";
 import argon2 from 'argon2'
-import { COOKIE_NAME, FORGOT_PASSWORD_PREFIX } from "../constants";
+import { COOKIE_NAME, FORGOT_PASSWORD_PREFIX } from "../constants/constants";
 import { UsernamePasswordInput } from "./UsernamePasswordInput";
 import { validateRegister } from "../utils/validateRegister";
 import { sendEmail } from "../utils/sendEmail";

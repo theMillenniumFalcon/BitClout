@@ -1,6 +1,6 @@
 import { Post } from "../entities/Post";
 import { Arg, Ctx, Field, InputType, Mutation, Query, Int, Resolver, UseMiddleware } from "type-graphql";
-import { MyContext } from "../types";
+import { MyContext } from "../types/types";
 import { Authentication } from "../middleware/Authentication";
 import { getConnection } from "typeorm";
 
