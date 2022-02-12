@@ -15,15 +15,15 @@ const Home = () => {
         <Link>Create Post</Link>
       </NextLink>
       <br />
-      {!data ? <div>loading...</div> : 
-      <Stack spacing={8}>
-        { data.posts.map((p: any) => (
-          <Box key={p.id} p={5} shadow='md' borderWidth='1px'>
-            <Heading fontSize='xl'>{p.title}</Heading>
-            <Text mt={4}>{p.text}</Text>
-        </Box>
-        )) }
-      </Stack>
+      {!data ? <div>loading...</div> :
+        <Stack spacing={8}>
+          {data.posts.map((p: any) => (
+            <Box key={p.id} p={5} shadow='md' borderWidth='1px'>
+              <Heading fontSize='xl'>{p.title}</Heading>
+              <Text mt={4}>{p.text}</Text>
+            </Box>
+          ))}
+        </Stack>
       }
     </Layout>
   )
