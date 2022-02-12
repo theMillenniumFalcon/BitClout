@@ -3,7 +3,7 @@ import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../utils/createUrqlClient'
 import { Box, Button } from '@chakra-ui/react'
 import { Formik, Form } from 'formik'
-import InputField from '../components/InputField'
+import InputForm from '../components/InputForm'
 import { Textarea } from '@chakra-ui/react'
 import { useCreatePostMutation, useMeQuery } from '../generated/graphql'
 import { useRouter } from "next/router"
@@ -31,7 +31,7 @@ const CreatePost: React.FC<{}> = ({}) => {
                 }}>
                 {({ isSubmitting }) => (
                     <Form>
-                        <InputField name="title" placeholder="title" label="Title" />
+                        <InputForm name="title" placeholder="title" label="Title" />
                         <Box mt={4}>
                             <Textarea textarea="true" name="text" placeholder="text..." label="Body" />
                         </Box>

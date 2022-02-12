@@ -2,7 +2,7 @@ import React from 'react'
 import { Formik, Form } from 'formik'
 import { Box, Button } from '@chakra-ui/react'
 import Wrapper from '../components/Wrapper'
-import InputField from '../components/InputField'
+import InputForm from '../components/InputForm'
 import { useRegisterMutation } from '../generated/graphql'
 import { toErrormap } from '../utils/toErrorMap'
 import { useRouter } from 'next/router'
@@ -15,29 +15,33 @@ const Register: React.FC<registerProps> = ({}) => {
     const router = useRouter()
     const [, register] = useRegisterMutation()
     return (
-        <Wrapper variant="small">
+        <Wrapper size="small">
             <Formik initialValues={{ email: "", username: "", password: "" }} 
-            onSubmit={async (values, {setErrors}) => {
-                const response = await register({ options: values })
-                // * The errors we get from graphql are:
-                // * [{field: 'username', message: 'something is wrong'}]
-                if (response.data?.register.errors) { // * this is optional chaining
-                    setErrors(toErrormap(response.data.register.errors))
-                } else if (response.data?.register.user) {
-                    // * worked
-                    router.push('/')
-                }
-            }}>
+            // onSubmit={async (values, {setErrors}) => {
+            //     const response = await register({ options: values })
+            //     // * The errors we get from graphql are:
+            //     // * [{field: 'username', message: 'something is wrong'}]
+            //     if (response.data?.register.errors) { // * this is optional chaining
+            //         setErrors(toErrormap(response.data.register.errors))
+            //     } else if (response.data?.register.user) {
+            //         // * worked
+            //         router.push('/')
+            //     }
+            // }}
+            onSubmit={(values) => {
+                console.log(values)
+            }}
+            >
                 {({ isSubmitting }) => (
                     <Form>
-                        <InputField name="username" placeholder="username" label="Username" />
+                        <InputForm name="username" placeholder="username" label="Username" />
                         <Box mt={4}>
-                            <InputField name="email" placeholder="email" label="Email" />
+                            <InputForm name="email" placeholder="email" label="Email" />
                         </Box>
                         <Box mt={4}>
-                            <InputField name="password" placeholder="password" label="Password" type="password" />
+                            <InputForm name="password" placeholder="password" label="Password" type="password" />
                         </Box>
-                        <Button mt={4} type='submit' colorScheme='teal' isLoading={isSubmitting}>Register</Button>
+                        <Button mt={4} type='submit' colorScheme='blue' isLoading={isSubmitting}>Register</Button>
                     </Form>
                 )}
             </Formik>

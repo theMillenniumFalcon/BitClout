@@ -2,11 +2,11 @@ import { Box } from '@chakra-ui/react'
 import React from 'react'
 
 interface wrapperProps {
-    variant?: 'small' | 'regular'
+    size?: 'small' | 'large'
 }
 
-const Wrapper: React.FC<wrapperProps> = ({children, variant='regular'}) => {
-    return <Box mt={8} mx="auto" maxW={variant === 'regular' ? "800px" : "400px"} w="100%">{children}</Box>
+const Wrapper: React.FC<wrapperProps> = ({children, size='regular'}) => {
+    return <Box mt={10} mx="auto" maxW={size === 'large' ? "700px" : "450px"} w="100%">{children}</Box>
 }
 
 export default Wrapper

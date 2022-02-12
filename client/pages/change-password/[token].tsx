@@ -1,10 +1,9 @@
-import { Box, Button, Flex, Link } from '@chakra-ui/react';
+import { Box, Button, Flex, Input, Link } from '@chakra-ui/react';
 import { Formik, Form } from 'formik';
 import { NextPage } from 'next';
 import { withUrqlClient } from 'next-urql';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import InputField from '../../components/InputField';
 import Wrapper from '../../components/Wrapper';
 import { useChangePasswordMutation } from '../../generated/graphql';
 import { createUrqlClient } from '../../utils/createUrqlClient';
@@ -16,7 +15,7 @@ const ChangePassword: NextPage = () => {
     const [, changePassword] = useChangePasswordMutation()
     const [tokenError, setTokenError] = useState('')
     return (
-        <Wrapper variant="small">
+        <Wrapper size="small">
             <Formik initialValues={{ newPassword: '' }}
                 onSubmit={async (values, { setErrors }) => {
                     const response = await changePassword({ newPassword: values.newPassword,
@@ -37,7 +36,7 @@ const ChangePassword: NextPage = () => {
                 }}>
                 {({ isSubmitting }) => (
                     <Form>
-                        <InputField name="newPassword" placeholder="new password" label="New Password" type="password" />
+                        <Input name="newPassword" placeholder="new password" label="New Password" type="password" />
                         {tokenError ?
                             (
                                 <Flex>
