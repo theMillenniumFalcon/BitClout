@@ -9,29 +9,25 @@ import { useRouter } from 'next/router'
 import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../utils/createUrqlClient'
 
-interface registerProps {}
+interface registerProps { }
 
-const Register: React.FC<registerProps> = ({}) => {
+const Register: React.FC<registerProps> = ({ }) => {
     const router = useRouter()
     const [, register] = useRegisterMutation()
     return (
         <Wrapper size="small">
-            <Formik initialValues={{ email: "", username: "", password: "" }} 
-            // onSubmit={async (values, {setErrors}) => {
-            //     const response = await register({ options: values })
-            //     // * The errors we get from graphql are:
-            //     // * [{field: 'username', message: 'something is wrong'}]
-            //     if (response.data?.register.errors) { // * this is optional chaining
-            //         setErrors(toErrormap(response.data.register.errors))
-            //     } else if (response.data?.register.user) {
-            //         // * worked
-            //         router.push('/')
-            //     }
-            // }}
-            onSubmit={(values) => {
-                console.log(values)
-            }}
-            >
+            <Formik initialValues={{ email: "", username: "", password: "" }}
+                onSubmit={async (values, { setErrors }) => {
+                    const response = await register({ options: values })
+                    // * The errors we get from graphql are:
+                    // * [{field: 'username', message: 'something is wrong'}]
+                    if (response.data?.register.errors) { // * this is optional chaining
+                        setErrors(toErrormap(response.data.register.errors))
+                    } else if (response.data?.register.user) {
+                        // * worked
+                        router.push('/')
+                    }
+                }}>
                 {({ isSubmitting }) => (
                     <Form>
                         <InputForm name="username" placeholder="username" label="Username" />

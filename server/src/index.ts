@@ -86,7 +86,7 @@ const main = async () => {
     })
 
     apolloServer.start().then((_) => {
-        apolloServer.applyMiddleware({ app, cors: { origin: false } })
+        apolloServer.applyMiddleware({ app, cors: false })
         const server = app.listen(PORT, () => {
             console.log(`Server listening on port ${PORT}`)
         })
