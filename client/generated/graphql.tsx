@@ -23,7 +23,7 @@ export type FieldError = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createPost: Post;
+  createPost: PostResponse;
   deletePost: Scalars['Boolean'];
   forgotPassword: Scalars['Boolean'];
   login: UserResponse;
@@ -35,7 +35,7 @@ export type Mutation = {
 
 
 export type MutationCreatePostArgs = {
-  input: PostInput;
+  options: PostInput;
 };
 
 
@@ -50,12 +50,12 @@ export type MutationForgotPasswordArgs = {
 
 
 export type MutationLoginArgs = {
-  options: UserInput;
+  options: UserLoginInput;
 };
 
 
 export type MutationRegisterArgs = {
-  options: UserInput;
+  options: UserRegisterInput;
 };
 
 
@@ -67,7 +67,7 @@ export type MutationResetPasswordArgs = {
 
 export type MutationUpdatePostArgs = {
   id: Scalars['Float'];
-  title?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type Post = {
@@ -86,17 +86,29 @@ export type PostInput = {
   title: Scalars['String'];
 };
 
+export type PostResponse = {
+  __typename?: 'PostResponse';
+  errors?: Maybe<Array<FieldError>>;
+  post?: Maybe<Post>;
+};
+
 export type Query = {
   __typename?: 'Query';
   post?: Maybe<Post>;
-  posts?: Maybe<Post>;
+  posts: Array<Post>;
   test: Scalars['String'];
   userLoggedIn?: Maybe<User>;
 };
 
 
 export type QueryPostArgs = {
-  id: Scalars['Float'];
+  id: Scalars['Int'];
+};
+
+
+export type QueryPostsArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 export type User = {
@@ -108,7 +120,12 @@ export type User = {
   username: Scalars['String'];
 };
 
-export type UserInput = {
+export type UserLoginInput = {
+  password: Scalars['String'];
+  username: Scalars['String'];
+};
+
+export type UserRegisterInput = {
   email: Scalars['String'];
   password: Scalars['String'];
   username: Scalars['String'];
@@ -120,9 +137,23 @@ export type UserResponse = {
   user?: Maybe<User>;
 };
 
+export type CreatePostMutationVariables = Exact<{
+  title: Scalars['String'];
+  text: Scalars['String'];
+}>;
+
+
+export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'PostResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, post?: { __typename?: 'Post', id: number, title: string } | null | undefined } };
+
+export type ForgotPasswordMutationVariables = Exact<{
+  email: Scalars['String'];
+}>;
+
+
+export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: boolean };
+
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
-  email: Scalars['String'];
   password: Scalars['String'];
 }>;
 
@@ -151,10 +182,13 @@ export type ResetPasswordMutationVariables = Exact<{
 
 export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, user?: { __typename?: 'User', id: number, username: string } | null | undefined } };
 
-export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
+export type PostsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
 
 
-export type PostsQuery = { __typename?: 'Query', posts?: { __typename?: 'Post', id: number, title: string } | null | undefined };
+export type PostsQuery = { __typename?: 'Query', posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string }> };
 
 export type UserLoggedInQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -162,9 +196,36 @@ export type UserLoggedInQueryVariables = Exact<{ [key: string]: never; }>;
 export type UserLoggedInQuery = { __typename?: 'Query', userLoggedIn?: { __typename?: 'User', id: number, username: string } | null | undefined };
 
 
+export const CreatePostDocument = gql`
+    mutation CreatePost($title: String!, $text: String!) {
+  createPost(options: {title: $title, text: $text}) {
+    errors {
+      field
+      message
+    }
+    post {
+      id
+      title
+    }
+  }
+}
+    `;
+
+export function useCreatePostMutation() {
+  return Urql.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument);
+};
+export const ForgotPasswordDocument = gql`
+    mutation ForgotPassword($email: String!) {
+  forgotPassword(email: $email)
+}
+    `;
+
+export function useForgotPasswordMutation() {
+  return Urql.useMutation<ForgotPasswordMutation, ForgotPasswordMutationVariables>(ForgotPasswordDocument);
+};
 export const LoginDocument = gql`
-    mutation Login($username: String!, $email: String!, $password: String!) {
-  login(options: {username: $username, email: $email, password: $password}) {
+    mutation Login($username: String!, $password: String!) {
+  login(options: {username: $username, password: $password}) {
     errors {
       field
       message
@@ -226,9 +287,11 @@ export function useResetPasswordMutation() {
   return Urql.useMutation<ResetPasswordMutation, ResetPasswordMutationVariables>(ResetPasswordDocument);
 };
 export const PostsDocument = gql`
-    query Posts {
-  posts {
+    query Posts($limit: Int!, $cursor: String) {
+  posts(limit: $limit, cursor: $cursor) {
     id
+    createdAt
+    updatedAt
     title
   }
 }

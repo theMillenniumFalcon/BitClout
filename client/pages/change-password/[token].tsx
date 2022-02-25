@@ -22,7 +22,7 @@ const ChangePassword: NextPage = () => {
                 })
                 // * The errors we get from graphql are:
                 // * [{field: 'username', message: 'something is wrong'}]
-                if (response.data?.resetPassword.errors) { // * this is optional chaining
+                if (response.data?.resetPassword.errors) {
                     const errorMap = Errors(response.data.resetPassword.errors)
                     if ('token' in errorMap) {
                         setTokenError(errorMap.token)
@@ -47,7 +47,7 @@ const ChangePassword: NextPage = () => {
 
                         )
                         : null}
-                    <Button mt={4} type='submit' colorScheme='teal' isLoading={isSubmitting}>Change Password</Button>
+                    <Button mt={4} type='submit' colorScheme='red' isLoading={isSubmitting}>Change Password</Button>
                 </Form>
             )}
         </Formik>

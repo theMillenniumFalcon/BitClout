@@ -45,7 +45,7 @@ const Register: React.FC<registerProps> = ({ }) => {
                 <InputForm name="password" placeholder="password" label="Password" type="password" />
               </Box>
               <Flex>
-                <Button mt={4} type='submit' colorScheme='blue' isLoading={isSubmitting}>Register</Button>
+                <Button mt={4} type='submit' colorScheme='red' isLoading={isSubmitting}>Register</Button>
                 <NextLink href="/login">
                   <Link ml='auto'>Already have an account?</Link>
                 </NextLink>

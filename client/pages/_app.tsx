@@ -1,16 +1,15 @@
-import { ChakraProvider } from '@chakra-ui/react'
-import { createClient, Provider } from 'urql'
-
-const client = createClient({ url: "http://localhost:4000/graphql"})
+import { ChakraProvider } from "@chakra-ui/react"
+import { withUrqlClient } from "next-urql"
+import { createUrqlClient } from "../utils/createUrqlClient"
 
 function MyApp({ Component, pageProps }: any) {
   return (
-    <Provider value={client}>
+    <>
       <ChakraProvider>
         <Component {...pageProps} />
       </ChakraProvider>
-    </Provider>
+    </>
   )
 }
 
-export default MyApp
+export default withUrqlClient(createUrqlClient)(MyApp)

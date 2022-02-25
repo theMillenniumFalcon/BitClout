@@ -15,13 +15,16 @@ const Login: React.FC<loginProps> = ({ }) => {
     const router = useRouter()
     const [, login] = useLoginMutation()
     return (
-        <Formik initialValues={{ username: "", email: "", password: "" }} onSubmit={async (values, { setErrors }) => {
+        <Formik initialValues={{ username: "",  password: "" }} onSubmit={async (values, { setErrors }) => {
             const response = await login(values)
             if (response.data?.login.errors) {
                 setErrors(Errors(response.data.login.errors))
             } else if (response.data?.login.user) {
-                // * worked
-                router.push('/')
+                if (typeof router.query.next === 'string') {
+                    router.push(router.query.next)
+                } else {
+                    router.push('/')
+                }
             }
         }}>
             {({ isSubmitting }) => (
@@ -39,7 +42,7 @@ const Login: React.FC<loginProps> = ({ }) => {
                                 <InputForm name="password" placeholder="password" label="Password" type="password" />
                             </Box>
                             <Flex>
-                                <Button mt={4} type='submit' colorScheme='blue' isLoading={isSubmitting}>Login</Button>
+                                <Button mt={4} type='submit' colorScheme='red' isLoading={isSubmitting}>Login</Button>
                                 <NextLink href="/forgot-password">
                                     <Link ml='auto'>Forgot Password?</Link>
                                 </NextLink>
