@@ -3,15 +3,128 @@ import { Arg, Mutation, Resolver, Ctx, Query } from "type-graphql";
 import { Context } from "../types/types";
 import argon2 from 'argon2'
 import { COOKIE, FORGOT_PASSWORD_PREFIX } from "../constants/constants";
-import { UserInput } from "../utils/UserInput";
-import { validateRegister } from "../utils/validateRegister";
+import { UserInput } from "../inputs/UserInput";
 import { sendEmail } from "../utils/sendEmail";
 import { v4 } from "uuid"
 import { getConnection } from "typeorm"
-import { UserResponse } from "../errors/UserResponse";
+import { UserResponse } from "../responses/UserResponse";
 
 @Resolver()
 export class UserResolver {
+
+    @Query(() => User, { nullable: true })
+    userLoggedIn(@Ctx() { req }: Context) {
+        // * if you are not logged in
+        if (!req.session.userId) {
+            return null
+        }
+        return User.findOne(req.session.userId)
+    }
+
+    @Mutation(() => UserResponse)
+    async register(
+        @Arg('options') options: UserInput,
+        @Ctx() { req }: Context
+    ): Promise<UserResponse> {
+        if (!options.email.includes('@') || !options.email.includes('.com')) {
+            return {
+                errors: [{
+                    field: 'email',
+                    message: "please enter a valid email address",
+                }]
+            }
+        }
+        if (options.username.length <= 2 || options.username.length >= 10) {
+            return {
+                errors: [{
+                    field: 'username',
+                    message: "username should be between two and ten characters long",
+                }]
+            }
+        }
+        if (options.username.includes('@')) {
+            return {
+                errors: [{
+                    field: 'username',
+                    message: "username cannot include an @ sign",
+                }]
+            }
+        }
+        if (options.password.length <= 5 || options.password.length >= 15) {
+            return {
+                errors: [{
+                    field: 'password',
+                    message: "password should be between five and fifteen characters long",
+                }]
+            }
+        }
+        const hashedPassword = await argon2.hash(options.password)
+        let user
+        try {
+            const result = await getConnection().createQueryBuilder().insert().into(User).values({
+                username: options.username,
+                email: options.email,
+                password: hashedPassword,
+            }).returning('*').execute()
+            user = result.raw[0]
+        } catch (err) {
+            // * duplicate email error
+            if (err.detail.includes('Key (email)')) {
+                return {
+                    errors: [{
+                        field: 'email',
+                        message: "An account is already linked with this email"
+                    }]
+                }
+            }
+            // * duplicate username error
+            if (err.code === process.env.DUPLICATE_ERROR_CODE) {
+                return {
+                    errors: [{
+                        field: 'username',
+                        message: "username already taken"
+                    }]
+                }
+            }
+        }
+
+        req.session.userId = user.id
+
+        return { user }
+    }
+
+    // * LOGIN
+    @Mutation(() => UserResponse)
+    async login(
+        @Arg('options') options: UserInput,
+        @Ctx() { req }: Context
+    ): Promise<UserResponse> {
+        const user = await User.findOne({ username: options.username })
+        if (!user) {
+            return {
+                errors: [{
+                    field: 'username',
+                    message: "that username doesn't exist"
+                }]
+            }
+        }
+
+        const validPassword = await argon2.verify(user.password, options.password)
+
+        if (!validPassword) {
+            return {
+                errors: [{
+                    field: 'password',
+                    message: "incorrect password"
+                }]
+            }
+        }
+
+        req.session.userId = user.id
+
+        return { user }
+    }
+
     @Mutation(() => UserResponse)
     async changePassword(
         @Arg('token') token: string,
@@ -85,88 +198,6 @@ export class UserResolver {
             `<a href="http://localhost:3000/change-password/${token}">Reset Password</a>`
         )
         return true
-    }
-
-    @Query(() => User, { nullable: true })
-    userLoggedIn(@Ctx() { req }: Context) {
-        // * if you are not logged in
-        if (!req.session.userId) {
-            return null
-        }
-        return User.findOne(req.session.userId)
-    }
-
-    @Mutation(() => UserResponse)
-    async register(
-        @Arg('options') options: UserInput,
-        @Ctx() { req }: Context
-    ): Promise<UserResponse> {
-        const errors = validateRegister(options)
-        if (errors) {
-            return { errors }
-        }
-
-        const hashedPassword = await argon2.hash(options.password)
-        let user
-        try {
-            const result = await getConnection().createQueryBuilder().insert().into(User).values({
-                username: options.username,
-                email: options.email,
-                password: hashedPassword
-            }).returning('*').execute()
-            user = result.raw[0]
-        } catch (err) {
-            // * duplicate username error
-            if (err.code === process.env.DUPLICATE_ERROR_CODE) {
-                return {
-                    errors: [{
-                        field: 'username',
-                        message: "username already taken"
-                    }]
-                }
-            }
-        }
-
-        // * store user id session
-        // * this will set a cookie on the user
-        // * keep them logged in
-        req.session.userId = user.id
-
-        return { user }
-    }
-
-    @Mutation(() => UserResponse)
-    async login(
-        @Arg('usernameOrEmail') usernameOrEmail: string,
-        @Arg('password') password: string,
-        @Ctx() { req }: Context
-    ): Promise<UserResponse> {
-        const user = await User.findOne(
-            usernameOrEmail.includes('@') ?
-                { where: { email: usernameOrEmail } }
-                : { where: { username: usernameOrEmail } }
-        )
-        if (!user) {
-            return {
-                errors: [{
-                    field: 'usernameOrEmail',
-                    message: "that username doesn't exist"
-                }]
-            }
-        }
-        const validPassword = await argon2.verify(user.password, password)
-        if (!validPassword) {
-            return {
-                errors: [{
-                    field: 'password',
-                    message: "incorrect password"
-                }]
-            }
-        }
-
-        req.session.userId = user.id
-
-        return { user }
     }
 
     @Mutation(() => Boolean)

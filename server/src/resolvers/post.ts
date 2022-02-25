@@ -2,7 +2,7 @@ import { Post } from "../entities/Post";
 import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
 import { Context } from "../types/types";
 import { Authentication } from "../middleware/Authentication";
-import { PostInput } from "../utils/PostInput";
+import { PostInput } from "../inputs/PostInput";
 
 @Resolver()
 export class PostResolver {
