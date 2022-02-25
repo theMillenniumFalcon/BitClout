@@ -7,9 +7,6 @@ type inputformprops = InputHTMLAttributes<HTMLInputElement> & {
     name: string
 }
 
-// * '' => false
-// * 'error message stuff' => true
-
 const InputForm: React.FC<inputformprops> = ({label, size, ...props}) => {
     const [field, {error}] = useField(props)
     return (

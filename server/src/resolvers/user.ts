@@ -126,7 +126,7 @@ export class UserResolver {
     }
 
     @Mutation(() => UserResponse)
-    async changePassword(
+    async resetPassword(
         @Arg('token') token: string,
         @Arg('newPassword') newPassword: string,
         @Ctx() { req, redis }: Context

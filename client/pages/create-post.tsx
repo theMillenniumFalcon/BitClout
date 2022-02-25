@@ -5,21 +5,20 @@ import { Box, Button } from '@chakra-ui/react'
 import { Formik, Form } from 'formik'
 import InputForm from '../components/InputForm'
 import { Textarea } from '@chakra-ui/react'
-import { useCreatePostMutation, useMeQuery } from '../generated/graphql'
+import { useCreatePostMutation, useUserLoggedInQuery } from '../generated/graphql'
 import { useRouter } from "next/router"
-import Layout from '../components/Layout'
 
 const CreatePost: React.FC<{}> = ({}) => {
-    const [{ data, fetching }] = useMeQuery()
+    const [{ data, fetching }] = useUserLoggedInQuery()
     const router = useRouter()
     useEffect(() => {
-        if (!data?.me) {
+        if (!data?.userLoggedIn) {
             router.replace('/login?next=' + router.pathname)
         }
     }, [fetching, data, router])
     const [, createPost] = useCreatePostMutation()
     return (
-        <Layout>
+        <>
             <Formik initialValues={{ title: '', text: '' }}
                 onSubmit={async (values) => {
                     const { error } = await createPost({input: values})
@@ -39,7 +38,7 @@ const CreatePost: React.FC<{}> = ({}) => {
                     </Form>
                 )}
             </Formik>
-        </Layout>
+        </>
     )
 
 }
