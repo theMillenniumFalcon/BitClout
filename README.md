@@ -12,6 +12,4 @@
 - TypeGraphQL
 - Node-argon2
 - GraphQL Code Generator
-- knexjs
 - Joi
-- Framer Motion
