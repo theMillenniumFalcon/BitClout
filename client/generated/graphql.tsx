@@ -91,7 +91,6 @@ export type Post = {
   id: Scalars['Float'];
   points: Scalars['Float'];
   text: Scalars['String'];
-  textSnippet: Scalars['String'];
   title: Scalars['String'];
   updatedAt: Scalars['String'];
 };
@@ -203,7 +202,7 @@ export type PostsQueryVariables = Exact<{
 }>;
 
 
-export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginationPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, creator: { __typename?: 'User', id: number, username: string } }> } };
+export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginationPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, points: number, creator: { __typename?: 'User', id: number, username: string } }> } };
 
 export type UserLoggedInQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -310,6 +309,7 @@ export const PostsDocument = gql`
       createdAt
       updatedAt
       title
+      points
       creator {
         id
         username
@@ -319,7 +319,7 @@ export const PostsDocument = gql`
 }
     `;
 
-export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'> = {}) {
+export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'>) {
   return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options });
 };
 export const UserLoggedInDocument = gql`
@@ -331,6 +331,6 @@ export const UserLoggedInDocument = gql`
 }
     `;
 
-export function useUserLoggedInQuery(options: Omit<Urql.UseQueryArgs<UserLoggedInQueryVariables>, 'query'> = {}) {
+export function useUserLoggedInQuery(options?: Omit<Urql.UseQueryArgs<UserLoggedInQueryVariables>, 'query'>) {
   return Urql.useQuery<UserLoggedInQuery>({ query: UserLoggedInDocument, ...options });
 };

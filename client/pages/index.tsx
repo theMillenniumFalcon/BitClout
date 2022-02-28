@@ -1,6 +1,6 @@
 import { withUrqlClient } from "next-urql";
 import { usePostsQuery } from "../generated/graphql";
-import { Box, Link, Stack, Heading, Text, Button, Badge, Flex } from '@chakra-ui/react'
+import { Box, Link, Stack, Heading, Text, Button, Badge, Flex, IconButton } from '@chakra-ui/react'
 import { createUrqlClient } from "../utils/createUrqlClient";
 import NextLink from 'next/link'
 import NavBar from "../components/NavBar"
@@ -35,10 +35,26 @@ const Home = () => {
             <Stack spacing={8}>
               {data?.posts?.posts.map((post) =>
                 <Flex key={post.id} p={5} shadow="md" borderWidth="1px">
-                  <Box>
-                    <ChevronUpIcon w={6} h={6} />
-                    <ChevronDownIcon w={6} h={6} />
-                  </Box>
+                  <Flex direction="column" justifyContent="center" alignItems="center" mr={4}>
+                    <IconButton
+                      // colorScheme='green'
+                      variant='solid'
+                      aria-label='Upvote'
+                      size='sm'
+                      fontSize='20px'
+                      onClick={() => { }}
+                      icon={<ChevronUpIcon />}
+                    />
+                    {post.points}
+                    <IconButton
+                      // colorScheme='red'
+                      variant='solid'
+                      aria-label='Downvote'
+                      size='sm'
+                      fontSize='20px'
+                      icon={<ChevronDownIcon />}
+                    />
+                  </Flex>
                   <Box>
                     <Heading fontSize="xl">
                       <NextLink href={`/post/${encodeURIComponent(post.id)}`} key={post.id}>
