@@ -1,5 +1,5 @@
 import { PostInput } from "../inputs/PostInput"
-import { Arg, Query, Resolver, Mutation, Ctx, UseMiddleware, Int, FieldResolver, Root, ObjectType, Field } from "type-graphql"
+import { Arg, Query, Resolver, Mutation, Ctx, UseMiddleware, Int, ObjectType, Field } from "type-graphql"
 import { Context } from "../types/types"
 import { PostResponse } from "../responses/PostResponse"
 import { Post } from "../entities/Post"
@@ -17,12 +17,6 @@ class PaginationPosts {
 
 @Resolver(Post)
 export class PostResolver {
-
-    // * TEXT SNIPPET
-    @FieldResolver(() => String)
-    textSnippet(@Root() root: Post) {
-        return root.text.slice(0, 50)
-    }
 
     // * UPVOTES
     @Mutation(() => Boolean)
