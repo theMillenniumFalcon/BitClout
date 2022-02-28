@@ -16,6 +16,7 @@ import { COOKIE, __prod__ } from "./constants/constants"
 import { TestResolver } from "./resolvers/test"
 import { UserResolver } from "./resolvers/user"
 import { PostResolver } from "./resolvers/post"
+import { Upvote } from "./entities/Upvote"
 
 const PORT = process.env.PORT || 4000
 
@@ -29,7 +30,7 @@ const main = async () => {
         logging: true,
         synchronize: false,
         migrations: [path.join(__dirname, "./migrations/*")],
-        entities: [User, Post]
+        entities: [User, Post, Upvote]
     })
 
     await connection.runMigrations()

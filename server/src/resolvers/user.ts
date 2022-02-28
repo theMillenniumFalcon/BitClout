@@ -1,6 +1,6 @@
 import { UserRegisterInput } from "../inputs/UserRegisterInput"
 import { UserLoginInput } from "../inputs/UserLoginInput"
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql"
+import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root } from "type-graphql"
 import { Context } from "../types/types"
 import { getConnection } from "typeorm"
 import { User } from "../entities/User"
@@ -10,8 +10,18 @@ import { COOKIE, FORGOT_PASSWORD_PREFIX } from "../constants/constants";
 import { v4 } from "uuid"
 import { sendEmail } from "../utils/sendEmail";
 
-@Resolver()
+@Resolver(User)
 export class UserResolver {
+
+    @FieldResolver(() => String)
+    email(@Root() user: User, @Ctx() { req }: Context) {
+        // * this is the current and its ok to show them their own email
+        if (req.session.userId === user.id) {
+            return user.email
+        }
+        // * current user wants to see someone else's email
+        return ""
+    }
 
     // * TO CHECK WHICH USER IS LOGGED IN
     @Query(() => User, { nullable: true })
