@@ -16,23 +16,26 @@ const Navbar: React.FC<NavbarProps> = ({ }) => {
     } else if (!data?.userLoggedIn) {
         body = (
             <Flex zIndex={1} position="sticky">
-                <NextLink href='/login'>
-                    <Link color='black' mr={5}>Login</Link>
-                </NextLink>
-                <NextLink href='/register'>
-                    <Link color='black'>Register</Link>
-                </NextLink>
+                <Box display="flex" alignItems="center" justifyContent="space-between">
+                    <NextLink href='/login'>
+                        <Button size='md' height='40px' width='110px' my={4} colorScheme='purple' variant='solid' mr={5}>
+                            <Link style={{ textDecoration: "none" }}>Login</Link>
+                        </Button>
+                    </NextLink>
+                    <NextLink href='/register'>
+                        <Button size='md' height='40px' width='110px' my={4} colorScheme='purple' variant='solid'>
+                            <Link style={{ textDecoration: "none" }}>Register</Link>
+                        </Button>
+                    </NextLink>
+                </Box>
             </Flex>
         )
     } else if (data?.userLoggedIn) {
         body = (
-            <Flex>
-                <NextLink href='/'>
-                    <Link color='black' mr={5}>Home</Link>
-                </NextLink>
+            <Box display="flex" alignItems="center" justifyContent="space-between">
                 <Box mr={5} color='black'>{data.userLoggedIn.username}</Box>
-                <Button variant='link' onClick={() => logout()} isLoading={LogoutFetching}>Logout</Button>
-            </Flex>
+                <Button size='md' height='40px' width='110px' onClick={() => logout()} isLoading={LogoutFetching} colorScheme='purple'>Logout</Button>
+            </Box>
         )
     }
 

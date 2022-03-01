@@ -17,6 +17,7 @@ import { TestResolver } from "./resolvers/test"
 import { UserResolver } from "./resolvers/user"
 import { PostResolver } from "./resolvers/post"
 import { Upvote } from "./entities/Upvote"
+import { VoteResolver } from "./resolvers/vote"
 
 const PORT = process.env.PORT || 4000
 
@@ -73,7 +74,7 @@ const main = async () => {
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [TestResolver, UserResolver, PostResolver],
+            resolvers: [TestResolver, UserResolver, PostResolver, VoteResolver],
             validate: false
         }),
         // * context is an object that is accessible to all the resolvers
