@@ -6,6 +6,7 @@ import NextLink from 'next/link'
 import NavBar from "../components/NavBar"
 import { useState } from 'react'
 import Upvote from "../components/Upvote";
+import QueryFail from "../components/QueryFail";
 
 const Home = () => {
   const [variables, setVariables] = useState({ limit: 10, cursor: null as null | string })
@@ -13,9 +14,9 @@ const Home = () => {
 
   if (!fetching && !data) {
     return (
-      <div>
-        <div>you got query failed for some reason</div>
-      </div>
+      <Box height="100vh" width="100vw">
+        <QueryFail />
+      </Box>
     );
   }
 

@@ -2,6 +2,7 @@ import { dedupExchange, fetchExchange, stringifyVariables } from "urql"
 import { LoginMutation, LogoutMutation, RegisterMutation, UserLoggedInDocument, UserLoggedInQuery } from "../generated/graphql"
 import { betterUpdateQuery } from "./betterUpdateQuery"
 import { cacheExchange, Resolver } from "@urql/exchange-graphcache"
+import { gql } from '@urql/core';
 
 const cursorPagination = (): Resolver => {
   return (_parent, fieldArgs, cache, info) => {
@@ -81,6 +82,29 @@ export const createUrqlClient = (ssrExchange: any) => ({
               }
             }
           )
+        },
+        vote: (_result, args, cache, info) => {
+          const { postId, value } = args
+          const data = cache.readFragment(
+            gql`
+              fragment _ on Post {
+                id
+                points
+              }
+            `,
+            { id: postId }
+          )
+          if (data) {
+            const newPoints = data.points + value
+            cache.writeFragment(
+              gql`
+                fragment __ on Post {
+                  points
+                }
+              `,
+              { id: postId, points: newPoints }
+            )
+          }
         },
         createPost: (_result, args, cache, info) => {
           const allFields = cache.inspectFields("Query")

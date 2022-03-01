@@ -13,7 +13,7 @@ const Upvote: React.FC<UpvoteProps> = ({ post }) => {
     return (
         <Flex direction="column" justifyContent="center" alignItems="center" mr={4}>
             <IconButton
-                // colorScheme='green'
+                colorScheme={ post.voteStatus === 1 ? 'green' : undefined}
                 variant='solid'
                 aria-label='Upvote'
                 size='sm'
@@ -31,7 +31,7 @@ const Upvote: React.FC<UpvoteProps> = ({ post }) => {
             />
             {post.points}
             <IconButton
-                // colorScheme='red'
+                colorScheme={ post.voteStatus === -1 ? 'red' : undefined}
                 variant='solid'
                 aria-label='Downvote'
                 size='sm'
