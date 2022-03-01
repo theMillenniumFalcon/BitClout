@@ -19,6 +19,9 @@ const Upvote: React.FC<UpvoteProps> = ({ post }) => {
                 size='sm'
                 fontSize='20px'
                 onClick={async () => {
+                    if (post.voteStatus === 1) {
+                        return
+                    }
                     setLoadingState('upvoteLoading')
                     await vote({
                         postId: post.id,
@@ -37,6 +40,9 @@ const Upvote: React.FC<UpvoteProps> = ({ post }) => {
                 size='sm'
                 fontSize='20px'
                 onClick={async () => {
+                    if (post.voteStatus === -1) {
+                        return
+                    }
                     setLoadingState('downvoteLoading')
                     await vote({
                         postId: post.id,

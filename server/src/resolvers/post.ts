@@ -91,7 +91,7 @@ export class PostResolver {
                 'email', u.email,
                 'createdAt', u."createdAt",
                 'updatedAt', u."updatedAt"
-                ) creator
+                ) creator,
             ${req.session.userId ? 
                 '(select value from upvote where "userId" = $2 and "postId" = p.id) "voteStatus"' 
                 : 'null as "voteStatus"'

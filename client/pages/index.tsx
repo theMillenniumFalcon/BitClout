@@ -17,7 +17,7 @@ const Home = () => {
       <Box height="100vh" width="100vw">
         <QueryFail />
       </Box>
-    );
+    )
   }
 
   return (
@@ -25,12 +25,10 @@ const Home = () => {
       <NavBar />
       <Box w="800px" mx="auto" p={5}>
         <NextLink href='/create-post'>
-          <Button size='md' height='45px' width='120px' border='2px' my={2} colorScheme='purple' variant='outline'>
+          <Button size='md' height='45px' width='120px' border='2px' my={4} colorScheme='purple' variant='outline'>
             <Link style={{ textDecoration: "none" }}>Create Post</Link>
           </Button>
         </NextLink>
-        <br />
-        <br />
         <Box>
           {fetching && !data ? (
             <div>Loading...</div>
@@ -65,7 +63,7 @@ const Home = () => {
               Load more
             </Button>
           ) : null}
-          <Box display="flex" h="80px" alignItems="center" justifyContent="center">
+          <Box display="flex" h="50px" alignItems="center" justifyContent="center">
             Made with ❤️ by
             <Link href="https://github.com/theMillenniumFalcon" target="_blank" style={{ textDecoration: "none" }}>
               <pre> Nishank</pre>
