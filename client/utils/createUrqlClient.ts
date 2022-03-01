@@ -3,6 +3,7 @@ import { LoginMutation, LogoutMutation, RegisterMutation, UserLoggedInDocument, 
 import { betterUpdateQuery } from "./betterUpdateQuery"
 import { cacheExchange, Resolver } from "@urql/exchange-graphcache"
 import { gql } from '@urql/core';
+import { isServer } from "./isServer";
 
 const cursorPagination = (): Resolver => {
   return (_parent, fieldArgs, cache, info) => {
@@ -38,100 +39,111 @@ const cursorPagination = (): Resolver => {
   };
 };
 
-export const createUrqlClient = (ssrExchange: any) => ({
-  url: 'http://localhost:4000/graphql',
-  exchanges: [dedupExchange, cacheExchange({
-    keys: {
-      Paginationposts: () => null
-    },
-    resolvers: {
-      Query: {
-        posts: cursorPagination()
-      }
-    },
-    updates: {
-      Mutation: {
-        login: (_result, args, cache, info) => {
-          betterUpdateQuery<LoginMutation, UserLoggedInQuery>(
-            cache,
-            { query: UserLoggedInDocument },
-            _result,
-            (result, query) => {
-              if (result.login.errors) {
-                return query
-              } else {
-                return {
-                  userLoggedIn: result.login.user
-                }
-              }
-            }
-          )
+export const createUrqlClient = (ssrExchange: any, ctx: any) => {
+
+  let cookie = ''
+  if (isServer()) {
+    cookie = ctx?.req?.headers?.cookie
+  }
+
+  return (
+    {
+      url: 'http://localhost:4000/graphql',
+      exchanges: [dedupExchange, cacheExchange({
+        keys: {
+          Paginationposts: () => null
         },
-        register: (_result, args, cache, info) => {
-          betterUpdateQuery<RegisterMutation, UserLoggedInQuery>(
-            cache,
-            { query: UserLoggedInDocument },
-            _result,
-            (result, query) => {
-              if (result.register.errors) {
-                return query
-              } else {
-                return {
-                  userLoggedIn: result.register.user
-                }
-              }
-            }
-          )
+        resolvers: {
+          Query: {
+            posts: cursorPagination()
+          }
         },
-        vote: (_result, args, cache, info) => {
-          const { postId, value } = args
-          const data = cache.readFragment(
-            gql`
+        updates: {
+          Mutation: {
+            login: (_result, args, cache, info) => {
+              betterUpdateQuery<LoginMutation, UserLoggedInQuery>(
+                cache,
+                { query: UserLoggedInDocument },
+                _result,
+                (result, query) => {
+                  if (result.login.errors) {
+                    return query
+                  } else {
+                    return {
+                      userLoggedIn: result.login.user
+                    }
+                  }
+                }
+              )
+            },
+            register: (_result, args, cache, info) => {
+              betterUpdateQuery<RegisterMutation, UserLoggedInQuery>(
+                cache,
+                { query: UserLoggedInDocument },
+                _result,
+                (result, query) => {
+                  if (result.register.errors) {
+                    return query
+                  } else {
+                    return {
+                      userLoggedIn: result.register.user
+                    }
+                  }
+                }
+              )
+            },
+            vote: (_result, args, cache, info) => {
+              const { postId, value } = args
+              const data = cache.readFragment(
+                gql`
               fragment _ on Post {
                 id
                 points
                 voteStatus
               }
             `,
-            { id: postId }
-          )
-          if (data) {
-            if (data.voteStatus === value) {
-              return
-            }
-            const newPoints = (data.points as number) + (!data.voteStatus? 1 : 2) * (value as any)
-            cache.writeFragment(
-              gql`
+                { id: postId }
+              )
+              if (data) {
+                if (data.voteStatus === value) {
+                  return
+                }
+                const newPoints = (data.points as number) + (!data.voteStatus ? 1 : 2) * (value as any)
+                cache.writeFragment(
+                  gql`
                 fragment __ on Post {
                   points
                   voteStatus
                 }
               `,
-              { id: postId, points: newPoints, voteStatus: value }
-            )
+                  { id: postId, points: newPoints, voteStatus: value }
+                )
+              }
+            },
+            createPost: (_result, args, cache, info) => {
+              const allFields = cache.inspectFields("Query")
+              const fieldInfos = allFields.filter(
+                (info) => info.fieldName === "posts"
+              )
+              fieldInfos.forEach((fi) => {
+                cache.invalidate("Query", "posts", fi.arguments)
+              })
+            },
+            logout: (_result, args, cache, info) => {
+              betterUpdateQuery<LogoutMutation, UserLoggedInQuery>(
+                cache,
+                { query: UserLoggedInDocument },
+                _result,
+                () => ({ userLoggedIn: null })
+              )
+            }
           }
-        },
-        createPost: (_result, args, cache, info) => {
-          const allFields = cache.inspectFields("Query")
-          const fieldInfos = allFields.filter(
-            (info) => info.fieldName === "posts"
-          )
-          fieldInfos.forEach((fi) => {
-            cache.invalidate("Query", "posts", fi.arguments)
-          })
-        },
-        logout: (_result, args, cache, info) => {
-          betterUpdateQuery<LogoutMutation, UserLoggedInQuery>(
-            cache,
-            { query: UserLoggedInDocument },
-            _result,
-            () => ({ userLoggedIn: null })
-          )
         }
+      }), ssrExchange, fetchExchange],
+      fetchOptions: {
+        credentials: "include" as const,
+        headers: cookie ? { cookie } : undefined
       }
     }
-  }), ssrExchange, fetchExchange],
-  fetchOptions: {
-    credentials: "include" as const
-  }
-})
+  )
+}

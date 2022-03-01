@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../utils/createUrqlClient'
-import { Box, Button } from '@chakra-ui/react'
+import { Box, Button, Text } from '@chakra-ui/react'
 import { Formik, Form } from 'formik'
 import InputForm from '../components/InputForm'
 import { Textarea } from '@chakra-ui/react'
@@ -38,11 +38,13 @@ const CreatePost: React.FC<{}> = ({ }) => {
                 }}>
                     {({ isSubmitting }) => (
                         <Form>
-                            <InputForm name="title" placeholder="title" label="Title" />
+                            <Text mb='7px' fontSize='md'>Title</Text>
+                            <InputForm name="title" placeholder="title" label="" />
                             <Box mt={4}>
-                                <Textarea textarea="true" name="text" placeholder="text..." label="Body" />
+                            <Text mb='7px' fontSize='md'>Body</Text>
+                                <Textarea name="text" placeholder="text..." />
                             </Box>
-                            <Button mt={4} textarea type='submit' colorScheme='red' isLoading={isSubmitting}>Create Post</Button>
+                            <Button mt={4} type='submit' colorScheme='red' isLoading={isSubmitting}>Create Post</Button>
                         </Form>
                     )}
                 </Formik>

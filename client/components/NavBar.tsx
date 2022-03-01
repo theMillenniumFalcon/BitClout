@@ -40,7 +40,7 @@ const Navbar: React.FC<NavbarProps> = ({ }) => {
         <Flex zIndex={1} position="sticky" top={0} bg="pink" p={3}>
             <Flex flex={1} m="auto" align="center" maxW={1000}>
                 <NextLink href="/">
-                    <Link>
+                    <Link style={{ textDecoration: "none" }}>
                         <Heading color="black">MyReddit</Heading>
                     </Link>
                 </NextLink>
