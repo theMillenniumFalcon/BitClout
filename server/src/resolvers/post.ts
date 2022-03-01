@@ -5,6 +5,7 @@ import { PostResponse } from "../responses/PostResponse"
 import { Post } from "../entities/Post"
 import { Authentication } from "../middleware/Authentication";
 import { getConnection } from "typeorm"
+import { Upvote } from "../entities/Upvote"
 
 @ObjectType()
 class PaginationPosts {
@@ -26,35 +27,42 @@ export class PostResolver {
         @Arg('value', () => Int) value: number,
         @Ctx() { req }: Context
     ) {
-        try {
-            const isUpvote = value !== -1
-            const realValue = isUpvote ? 1 : -1
-            const userId = req.session.userId
-            // Upvote.insert({ userId, postId, value: realValue })
+        const isUpvote = value !== -1
+        const realValue = isUpvote ? 1 : -1
+        const userId = req.session.userId
+        const upvote = await Upvote.findOne({ where: { postId, userId } })
 
-            getConnection().query(`
-            START TRANSACTION;
+        // * the user has voted on the post before and they are changing their vote
+        if (upvote && upvote.value !== realValue) {
+            await getConnection().transaction(async (tm) => {
+                await tm.query(`
+                    update upvote
+                    set value = $1
+                    where "postId" = $2 and "userId" = $3
+                `, [realValue, postId, userId])
 
-            insert into upvote ("userId", "postId", value)
-            values (${userId}, ${postId}, ${realValue});
+                await tm.query(`
+                    update post
+                    set points = points + $1
+                    where id = $2
+                `, [2 * realValue, postId])
+            })
+        } else if (!upvote) {
+            // * has never voted on the post before
+            await getConnection().transaction(async (tm) => {
+                await tm.query(`
+                    insert into upvote ("userId", "postId", value)
+                    values ($1, $2, $3);
+                `, [userId, postId, realValue])
 
-            update post
-            set points = points + ${realValue}
-            where id = ${postId};
+                await tm.query(`
+                    update post
+                    set points = points + $1
+                    where id = $2;
+                `, [realValue, postId])
             
-            COMMIT;
-        `)
-        } catch (err) {
-            // if (err.code === process.env.DUPLICATE_ERROR_CODE) {
-            //     return {
-            //         errors: [{
-            //             field: 'username',
-            //             message: "username already taken"
-            //         }]
-            //     }
-            // }
-            throw new Error(err.message)
-        }
+            })
+        } 
 
         return true
     }
@@ -74,37 +82,22 @@ export class PostResolver {
             replacements.push(new Date(parseInt(cursor)))
         }
 
-        const posts = await getConnection().query(
-            `
-          select p.*, 
-          json_build_object(
-            'id', u.id,
-            'username', u.username,
-            'email', u.email,
-            'createdAt', u."createdAt",
-            'updatedAt', u."updatedAt"
-            ) creator 
-          from post p
-          inner join public.user u on u.id = p."creatorId"
-          ${cursor ? `where p."createdAt" < $2` : ""}
-          order by p."createdAt" DESC
-          limit $1
-          `,
-            replacements
+        const posts = await getConnection().query(`
+            select p.*, 
+            json_build_object(
+                'id', u.id,
+                'username', u.username,
+                'email', u.email,
+                'createdAt', u."createdAt",
+                'updatedAt', u."updatedAt"
+                ) creator 
+            from post p
+            inner join public.user u on u.id = p."creatorId"
+            ${cursor ? `where p."createdAt" < $2` : ""}
+            order by p."createdAt" DESC
+            limit $1
+        `, replacements
         )
-
-        // const queryBuilder = getConnection()
-        //     .getRepository(Post)
-        //     .createQueryBuilder("p")
-        //     .innerJoinAndSelect("p.creator", "u", '"u.id = p."creatorId"')
-        //     .orderBy('p."createdAt"', "DESC")
-        //     .take(realLimitPlusOne)
-
-        // if (cursor) {
-        //     queryBuilder.where('p."createdAt" < :cursor', { cursor: new Date(parseInt(cursor)) })
-        // }
-
-        // const posts = await queryBuilder.getMany()
 
         return { posts: posts.slice(0, realLimit), hasMore: posts.length === realLimitPlusOne }
     }
