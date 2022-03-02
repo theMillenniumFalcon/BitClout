@@ -44,7 +44,7 @@ const Navbar: React.FC<NavbarProps> = ({ }) => {
             <Flex flex={1} m="auto" align="center" maxW={1000}>
                 <NextLink href="/">
                     <Link style={{ textDecoration: "none" }}>
-                        <Heading color="black">MyReddit</Heading>
+                        <Heading color="black">Bitclout</Heading>
                     </Link>
                 </NextLink>
                 <Box ml={"auto"}>{body}</Box>
