@@ -26,11 +26,18 @@ const Home = () => {
     <>
       <NavBar />
       <Box w="800px" mx="auto" p={5}>
-        <NextLink href='/create-post'>
-          <Button size='md' height='45px' width='120px' border='2px' my={4} colorScheme='red' variant='solid'>
-            <Link style={{ textDecoration: "none" }}>Create Post</Link>
-          </Button>
-        </NextLink>
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          <NextLink href='/create-post'>
+            <Button size='md' height='45px' width='120px' border='2px' my={4} colorScheme='red' variant='solid'>
+              <Link style={{ textDecoration: "none" }}>Create Post</Link>
+            </Button>
+          </NextLink>
+          <NextLink href='/explore-groups'>
+            <Button size='md' height='45px' width='150px' border='2px' my={4} colorScheme='red' variant='solid'>
+              <Link style={{ textDecoration: "none" }}>Explore Groups</Link>
+            </Button>
+          </NextLink>
+        </Box>
         <Box>
           {fetching && !data ? (
             <div>Loading...</div>

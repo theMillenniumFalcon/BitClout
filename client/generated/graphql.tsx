@@ -21,22 +21,53 @@ export type FieldError = {
   message: Scalars['String'];
 };
 
+export type Group = {
+  __typename?: 'Group';
+  createdAt: Scalars['String'];
+  id: Scalars['Float'];
+  name: Scalars['String'];
+  updatedAt: Scalars['String'];
+};
+
+export type GroupInput = {
+  name: Scalars['String'];
+};
+
+export type GroupResponse = {
+  __typename?: 'GroupResponse';
+  errors?: Maybe<Array<FieldError>>;
+  group?: Maybe<Group>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  createGroup: GroupResponse;
   createPost: PostResponse;
+  deleteGroup: Scalars['Boolean'];
   deletePost: Scalars['Boolean'];
   forgotPassword: Scalars['Boolean'];
   login: UserResponse;
   logout: Scalars['Boolean'];
   register: UserResponse;
   resetPassword: UserResponse;
+  updateGroup?: Maybe<Group>;
   updatePost?: Maybe<Post>;
   vote: Scalars['Boolean'];
 };
 
 
+export type MutationCreateGroupArgs = {
+  options: GroupInput;
+};
+
+
 export type MutationCreatePostArgs = {
   options: PostInput;
+};
+
+
+export type MutationDeleteGroupArgs = {
+  id: Scalars['Float'];
 };
 
 
@@ -63,6 +94,12 @@ export type MutationRegisterArgs = {
 export type MutationResetPasswordArgs = {
   newPassword: Scalars['String'];
   token: Scalars['String'];
+};
+
+
+export type MutationUpdateGroupArgs = {
+  id: Scalars['Float'];
+  name?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -110,10 +147,17 @@ export type PostResponse = {
 
 export type Query = {
   __typename?: 'Query';
+  Group?: Maybe<Group>;
+  groups?: Maybe<Array<Group>>;
   post?: Maybe<Post>;
   posts: PaginationPosts;
   test: Scalars['String'];
   userLoggedIn?: Maybe<User>;
+};
+
+
+export type QueryGroupArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -152,6 +196,13 @@ export type UserResponse = {
   errors?: Maybe<Array<FieldError>>;
   user?: Maybe<User>;
 };
+
+export type CreateGroupMutationVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type CreateGroupMutation = { __typename?: 'Mutation', createGroup: { __typename?: 'GroupResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, group?: { __typename?: 'Group', id: number, name: string } | null | undefined } };
 
 export type CreatePostMutationVariables = Exact<{
   title: Scalars['String'];
@@ -243,6 +294,24 @@ export type UserLoggedInQueryVariables = Exact<{ [key: string]: never; }>;
 export type UserLoggedInQuery = { __typename?: 'Query', userLoggedIn?: { __typename?: 'User', id: number, username: string } | null | undefined };
 
 
+export const CreateGroupDocument = gql`
+    mutation CreateGroup($name: String!) {
+  createGroup(options: {name: $name}) {
+    errors {
+      field
+      message
+    }
+    group {
+      id
+      name
+    }
+  }
+}
+    `;
+
+export function useCreateGroupMutation() {
+  return Urql.useMutation<CreateGroupMutation, CreateGroupMutationVariables>(CreateGroupDocument);
+};
 export const CreatePostDocument = gql`
     mutation CreatePost($title: String!, $text: String!) {
   createPost(options: {title: $title, text: $text}) {

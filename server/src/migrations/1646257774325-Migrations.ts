@@ -1,9 +1,27 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class Migrations1644585649025 implements MigrationInterface {
-    name = 'Migrations1644585649025'
+export class Migrations1646257774325 implements MigrationInterface {
+    name = 'Migrations1646257774325'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`
+            CREATE TABLE "group" (
+                "id" SERIAL NOT NULL,
+                "name" character varying NOT NULL,
+                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
+                CONSTRAINT "UQ_8a45300fd825918f3b40195fbdc" UNIQUE ("name"),
+                CONSTRAINT "PK_256aa0fda9b1de1a73ee0b7106b" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "upvote" (
+                "value" integer NOT NULL,
+                "userId" integer NOT NULL,
+                "postId" integer NOT NULL,
+                CONSTRAINT "PK_802ac6b9099f86aa24eb22d9c05" PRIMARY KEY ("userId", "postId")
+            )
+        `);
         await queryRunner.query(`
             CREATE TABLE "user" (
                 "id" SERIAL NOT NULL,
@@ -30,6 +48,14 @@ export class Migrations1644585649025 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
+            ALTER TABLE "upvote"
+            ADD CONSTRAINT "FK_3abd9f37a94f8db3c33bda4fdae" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "upvote"
+            ADD CONSTRAINT "FK_efc79eb8b81262456adfcb87de1" FOREIGN KEY ("postId") REFERENCES "post"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
             ALTER TABLE "post"
             ADD CONSTRAINT "FK_9e91e6a24261b66f53971d3f96b" FOREIGN KEY ("creatorId") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
@@ -40,10 +66,22 @@ export class Migrations1644585649025 implements MigrationInterface {
             ALTER TABLE "post" DROP CONSTRAINT "FK_9e91e6a24261b66f53971d3f96b"
         `);
         await queryRunner.query(`
+            ALTER TABLE "upvote" DROP CONSTRAINT "FK_efc79eb8b81262456adfcb87de1"
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "upvote" DROP CONSTRAINT "FK_3abd9f37a94f8db3c33bda4fdae"
+        `);
+        await queryRunner.query(`
             DROP TABLE "post"
         `);
         await queryRunner.query(`
             DROP TABLE "user"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "upvote"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "group"
         `);
     }
 

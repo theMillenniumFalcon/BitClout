@@ -1,0 +1,14 @@
+mutation CreateGroup($name: String!) {
+    createGroup(
+      options: { name: $name }
+    ) {
+      errors {
+        field
+        message
+      }
+      group {
+        id
+        name
+      }
+    }
+  }

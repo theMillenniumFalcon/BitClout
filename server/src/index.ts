@@ -18,6 +18,8 @@ import { UserResolver } from "./resolvers/user"
 import { PostResolver } from "./resolvers/post"
 import { Upvote } from "./entities/Upvote"
 import { VoteResolver } from "./resolvers/vote"
+import { Group } from "./entities/Group"
+import { GroupResolver } from "./resolvers/group"
 
 const PORT = process.env.PORT || 4000
 
@@ -27,11 +29,11 @@ const main = async () => {
         type: "postgres",
         username: "postgres",
         password: "postgres",
-        database: "reddit",
+        database: "bitclout",
         logging: true,
         synchronize: false,
         migrations: [path.join(__dirname, "./migrations/*")],
-        entities: [User, Post, Upvote]
+        entities: [User, Post, Upvote, Group]
     })
 
     await connection.runMigrations()
@@ -39,7 +41,7 @@ const main = async () => {
     // await User.delete({})
     // await Channel.delete({})
     // await Message.delete({})
-    // await Team.delete({})
+    // await Group.delete({})
 
     const app = express()
 
@@ -74,7 +76,7 @@ const main = async () => {
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [TestResolver, UserResolver, PostResolver, VoteResolver],
+            resolvers: [TestResolver, UserResolver, PostResolver, VoteResolver, GroupResolver],
             validate: false
         }),
         // * context is an object that is accessible to all the resolvers
