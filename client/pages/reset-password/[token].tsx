@@ -8,8 +8,9 @@ import { useResetPasswordMutation } from '../../generated/graphql';
 import { createUrqlClient } from '../../utils/createUrqlClient';
 import Errors from '../../utils/Errors';
 import NextLink from 'next/link'
+import InputForm from '../../components/InputForm';
 
-const ChangePassword: NextPage = () => {
+const ResetPassword: NextPage = () => {
     const router = useRouter()
     const [, changePassword] = useResetPasswordMutation()
     const [tokenError, setTokenError] = useState('')
@@ -34,24 +35,32 @@ const ChangePassword: NextPage = () => {
                 }
             }}>
             {({ isSubmitting }) => (
-                <Form>
-                    <Input name="newPassword" placeholder="new password" label="New Password" type="password" />
-                    {tokenError ?
-                        (
-                            <Flex>
-                                <Box mr={2} style={{ color: 'red' }}>{tokenError}</Box>
-                                <NextLink href="/forgot-password">
-                                    <Link>Click here</Link>
-                                </NextLink>
-                            </Flex>
+                <Box display="flex" alignItems="center" justifyContent="center" height="100vh"
+                    bgPosition="center"
+                    bgRepeat="no-repeat"
+                    bgGradient='linear(to-b, rgba(0, 0, 0, 0) 0%, rgba(90, 0, 0, 1) 100%)'
+                >
+                    <Box w="700px" mx="auto" bg="white" p={7} borderRadius='20px'>
+                        <Form>
+                            <InputForm name="newPassword" placeholder="new password" label="New Password" type="password" />
+                            {tokenError ?
+                                (
+                                    <Flex>
+                                        <Box mr={2} style={{ color: 'red' }}>{tokenError}</Box>
+                                        <NextLink href="/forgot-password">
+                                            <Link>Click here</Link>
+                                        </NextLink>
+                                    </Flex>
 
-                        )
-                        : null}
-                    <Button mt={4} type='submit' colorScheme='red' isLoading={isSubmitting}>Change Password</Button>
-                </Form>
+                                )
+                                : null}
+                            <Button mt={4} type='submit' colorScheme='red' isLoading={isSubmitting}>Change Password</Button>
+                        </Form>
+                    </Box>
+                </Box>
             )}
         </Formik>
     )
 }
 
-export default withUrqlClient(createUrqlClient)(ChangePassword)
+export default withUrqlClient(createUrqlClient)(ResetPassword)

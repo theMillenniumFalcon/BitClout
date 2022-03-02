@@ -1,6 +1,6 @@
 import { withUrqlClient } from "next-urql";
-import { useDeletePostMutation, usePostsQuery } from "../generated/graphql";
-import { Box, Link, Stack, Heading, Text, Button, Badge, Flex, IconButton } from '@chakra-ui/react'
+import { useDeletePostMutation, usePostsQuery, useUserLoggedInQuery } from "../generated/graphql";
+import { Box, Link, Stack, Heading, Button, Badge, Flex } from '@chakra-ui/react'
 import { createUrqlClient } from "../utils/createUrqlClient";
 import NextLink from 'next/link'
 import NavBar from "../components/NavBar"
@@ -12,6 +12,7 @@ const Home = () => {
   const [variables, setVariables] = useState({ limit: 10, cursor: null as null | string })
   const [{ data, fetching }] = usePostsQuery({ variables })
   const [, deletePost] = useDeletePostMutation()
+  const [{ data: userLoggedInData }] = useUserLoggedInQuery()
 
   if (!fetching && !data) {
     return (
@@ -51,19 +52,21 @@ const Home = () => {
                         {post.creator.username}
                       </Badge>
                     </Box>
-                    <Box>
-                      <Button
-                        size='md'
-                        height='45px'
-                        width='120px'
-                        border='2px'
-                        colorScheme='red'
-                        variant='solid'
-                        onClick={() => { deletePost({ id: post.id }) }}
-                      >
-                        Delete Post
-                      </Button>
-                    </Box>
+                    {userLoggedInData?.userLoggedIn?.id !== post.creator.id ? null : (
+                      <Box>
+                        <Button
+                          size='md'
+                          height='45px'
+                          width='120px'
+                          border='2px'
+                          colorScheme='red'
+                          variant='solid'
+                          onClick={() => { deletePost({ id: post.id }) }}
+                        >
+                          Delete Post
+                        </Button>
+                      </Box>
+                    )}
                   </Box>
                 </Flex>
               ))}
