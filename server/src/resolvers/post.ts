@@ -5,6 +5,7 @@ import { PostResponse } from "../responses/PostResponse"
 import { Post } from "../entities/Post"
 import { Authentication } from "../middleware/Authentication";
 import { getConnection } from "typeorm"
+import { Upvote } from "../entities/Upvote"
 
 @ObjectType()
 class PaginationPosts {
@@ -49,8 +50,8 @@ export class PostResolver {
                 'createdAt', u."createdAt",
                 'updatedAt', u."updatedAt"
                 ) creator,
-            ${req.session.userId ? 
-                '(select value from upvote where "userId" = $2 and "postId" = p.id) "voteStatus"' 
+            ${req.session.userId ?
+                '(select value from upvote where "userId" = $2 and "postId" = p.id) "voteStatus"'
                 : 'null as "voteStatus"'
             }
             from post p
@@ -106,30 +107,42 @@ export class PostResolver {
     @UseMiddleware(Authentication)
     async updatePost(
         @Arg('id') id: number,
-        @Arg('name', () => String, { nullable: true }) title: string
+        @Arg('title') title: string,
+        @Arg('text') text: string,
+        @Ctx() { req }: Context
     ): Promise<Post | null> {
         const post = await Post.findOne(id)
         if (!post) {
             return null
         }
-        if (typeof title !== 'undefined') {
-            await Post.update({ id }, { title })
+        if (post.creatorId !== req.session.userId) {
+            throw new Error("not authorized")
         }
-        return post
+        
+        const result = getConnection().createQueryBuilder().update(Post).set({ title, text })
+        .where('id = :id and "creatorId" = :creatorId', { id, creatorId: req.session.userId }).returning("*").execute()
+        
+        return (await result).raw[0]
     }
 
     // * DELETE POST
     @Mutation(() => Boolean)
     @UseMiddleware(Authentication)
     async deletePost(
-        @Arg('id') id: number,
+        @Arg('id', () => Int) id: number,
         @Ctx() { req }: Context
     ): Promise<boolean> {
-        try {
-            await Post.delete({ id, creatorId: req.session.userId })
-        } catch {
+        const post = await Post.findOne(id)
+        if (!post) {
             return false
         }
+        if (post.creatorId !== req.session.userId) {
+            throw new Error("not authorized")
+        }
+
+        await Upvote.delete({ postId: id })
+        await Post.delete({ id })
+        
         return true
     }
 

@@ -92,6 +92,9 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                 }
               )
             },
+            deletePost: (_result, args, cache, info) => {
+              cache.invalidate({ __typename: "Post", id: (args as any).id })
+            },
             vote: (_result, args, cache, info) => {
               const { postId, value } = args
               const data = cache.readFragment(

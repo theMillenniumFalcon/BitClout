@@ -1,5 +1,5 @@
 import { withUrqlClient } from "next-urql";
-import { usePostsQuery } from "../generated/graphql";
+import { useDeletePostMutation, usePostsQuery } from "../generated/graphql";
 import { Box, Link, Stack, Heading, Text, Button, Badge, Flex, IconButton } from '@chakra-ui/react'
 import { createUrqlClient } from "../utils/createUrqlClient";
 import NextLink from 'next/link'
@@ -11,6 +11,7 @@ import QueryFail from "../components/QueryFail";
 const Home = () => {
   const [variables, setVariables] = useState({ limit: 10, cursor: null as null | string })
   const [{ data, fetching }] = usePostsQuery({ variables })
+  const [, deletePost] = useDeletePostMutation()
 
   if (!fetching && !data) {
     return (
@@ -34,24 +35,38 @@ const Home = () => {
             <div>Loading...</div>
           ) : (
             <Stack spacing={8}>
-              {data?.posts?.posts.map((post) =>
+              {data?.posts?.posts.map((post) => !post ? null : (
                 <Flex key={post.id} p={5} shadow="md" borderWidth="1px">
                   <Upvote post={post} />
-                  <Box>
-                    <Heading fontSize="xl">
-                      <NextLink href={`/post/${encodeURIComponent(post.id)}`} key={post.id}>
-                        <Link color='black' mr={5}>
-                          {post.title}
-                          <br />
-                        </Link>
-                      </NextLink>
-                    </Heading>
-                    <Badge colorScheme='purple' variant='subtle'>
-                      {post.creator.username}
-                    </Badge>
+                  <Box width="100%" display="flex" alignItems="center" justifyContent="space-between">
+                    <Box>
+                      <Heading fontSize="xl">
+                        <NextLink href={`/post/${encodeURIComponent(post.id)}`} key={post.id}>
+                          <Link color='black' mr={5}>
+                            {post.title}
+                          </Link>
+                        </NextLink>
+                      </Heading>
+                      <Badge colorScheme='purple' variant='subtle'>
+                        {post.creator.username}
+                      </Badge>
+                    </Box>
+                    <Box>
+                      <Button
+                        size='md'
+                        height='45px'
+                        width='120px'
+                        border='2px'
+                        colorScheme='red'
+                        variant='solid'
+                        onClick={() => { deletePost({ id: post.id }) }}
+                      >
+                        Delete Post
+                      </Button>
+                    </Box>
                   </Box>
                 </Flex>
-              )}
+              ))}
             </Stack>
           )}
           {data && data.posts.hasMore ? (
