@@ -18,7 +18,7 @@ export class GroupResolver {
 
     // * SINGLE GROUP
     @Query(() => Group, { nullable: true })
-    Group(@Arg("id", () => Int) id: number): Promise<Group | undefined> {
+    group(@Arg("id", () => Int) id: number): Promise<Group | undefined> {
         return Group.findOne(id)
     }
 
@@ -42,6 +42,7 @@ export class GroupResolver {
         try {
             const result = await getConnection().createQueryBuilder().insert().into(Group).values({
                 name: options.name,
+                description: options.description
             }).returning('*').execute()
             group = result.raw[0]
         } catch (err) {

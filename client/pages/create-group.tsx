@@ -25,6 +25,10 @@ const CreateGroup: React.FC<{}> = ({ }) => {
                         <Form>
                             <Text mb='7px' fontSize='md'>Name</Text>
                             <InputForm name="name" placeholder="name" label="" />
+                            <Box mt={4}>
+                                <Text mb='7px' fontSize='md'>Description</Text>
+                                <InputForm name="description" placeholder="description" label="" />
+                            </Box>
                             <Button mt={4} type='submit' colorScheme='red' isLoading={isSubmitting}>Create Group</Button>
                         </Form>
                     )}

@@ -24,12 +24,14 @@ export type FieldError = {
 export type Group = {
   __typename?: 'Group';
   createdAt: Scalars['String'];
+  description: Scalars['String'];
   id: Scalars['Float'];
   name: Scalars['String'];
   updatedAt: Scalars['String'];
 };
 
 export type GroupInput = {
+  description: Scalars['String'];
   name: Scalars['String'];
 };
 
@@ -147,7 +149,7 @@ export type PostResponse = {
 
 export type Query = {
   __typename?: 'Query';
-  Group?: Maybe<Group>;
+  group?: Maybe<Group>;
   groups?: Maybe<Array<Group>>;
   post?: Maybe<Post>;
   posts: PaginationPosts;
@@ -199,6 +201,7 @@ export type UserResponse = {
 
 export type CreateGroupMutationVariables = Exact<{
   name: Scalars['String'];
+  description: Scalars['String'];
 }>;
 
 
@@ -273,6 +276,18 @@ export type VoteMutationVariables = Exact<{
 
 export type VoteMutation = { __typename?: 'Mutation', vote: boolean };
 
+export type GroupQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type GroupQuery = { __typename?: 'Query', group?: { __typename?: 'Group', id: number, createdAt: string, updatedAt: string, name: string, description: string } | null | undefined };
+
+export type GroupsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GroupsQuery = { __typename?: 'Query', groups?: Array<{ __typename?: 'Group', id: number, name: string, description: string }> | null | undefined };
+
 export type PostQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
@@ -295,8 +310,8 @@ export type UserLoggedInQuery = { __typename?: 'Query', userLoggedIn?: { __typen
 
 
 export const CreateGroupDocument = gql`
-    mutation CreateGroup($name: String!) {
-  createGroup(options: {name: $name}) {
+    mutation CreateGroup($name: String!, $description: String!) {
+  createGroup(options: {name: $name, description: $description}) {
     errors {
       field
       message
@@ -432,6 +447,34 @@ export const VoteDocument = gql`
 
 export function useVoteMutation() {
   return Urql.useMutation<VoteMutation, VoteMutationVariables>(VoteDocument);
+};
+export const GroupDocument = gql`
+    query Group($id: Int!) {
+  group(id: $id) {
+    id
+    createdAt
+    updatedAt
+    name
+    description
+  }
+}
+    `;
+
+export function useGroupQuery(options: Omit<Urql.UseQueryArgs<GroupQueryVariables>, 'query'>) {
+  return Urql.useQuery<GroupQuery>({ query: GroupDocument, ...options });
+};
+export const GroupsDocument = gql`
+    query Groups {
+  groups {
+    id
+    name
+    description
+  }
+}
+    `;
+
+export function useGroupsQuery(options?: Omit<Urql.UseQueryArgs<GroupsQueryVariables>, 'query'>) {
+  return Urql.useQuery<GroupsQuery>({ query: GroupsDocument, ...options });
 };
 export const PostDocument = gql`
     query Post($id: Int!) {

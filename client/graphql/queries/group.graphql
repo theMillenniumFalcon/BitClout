@@ -1,0 +1,9 @@
+query Group($id: Int!) {
+    group(id: $id) {
+        id
+        createdAt
+        updatedAt
+        name
+        description
+    }
+}

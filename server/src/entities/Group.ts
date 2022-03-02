@@ -12,6 +12,10 @@ export class Group extends BaseEntity {
   @Column({ unique: true })
   name!: string;
 
+  @Field()
+  @Column()
+  description!: string;
+
   @Field(() => String)
   @CreateDateColumn()
   createdAt: Date;
