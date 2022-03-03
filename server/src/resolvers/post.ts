@@ -87,16 +87,43 @@ export class PostResolver {
             }
         }
 
+        if (options.text.length <= 0) {
+            return {
+                errors: [{
+                    field: 'text',
+                    message: "Text should not be empty",
+                }]
+            }
+        }
+
+        if (!options.groupId) {
+            return {
+                errors: [{
+                    field: 'groupId',
+                    message: "Please provide a group name",
+                }]
+            }
+        }
+
         let post
         try {
             const result = await getConnection().createQueryBuilder().insert().into(Post).values({
                 title: options.title,
                 text: options.text,
-                creatorId: req.session.userId
+                creatorId: req.session.userId,
+                groupId: options.groupId
             }).returning('*').execute()
             post = result.raw[0]
         } catch (err) {
-            console.error(err)
+            // * no group error
+            if (err.code === 23503) {
+                return {
+                    errors: [{
+                        field: 'groupId',
+                        message: "No group has this name"
+                    }]
+                }
+            }
         }
 
         return { post }

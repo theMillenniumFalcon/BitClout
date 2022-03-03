@@ -20,6 +20,8 @@ import { Upvote } from "./entities/Upvote"
 import { VoteResolver } from "./resolvers/vote"
 import { Group } from "./entities/Group"
 import { GroupResolver } from "./resolvers/group"
+import { Member } from "./entities/Member"
+import { MemberResolver } from "./resolvers/member"
 
 const PORT = process.env.PORT || 4000
 
@@ -33,14 +35,14 @@ const main = async () => {
         logging: true,
         synchronize: false,
         migrations: [path.join(__dirname, "./migrations/*")],
-        entities: [User, Post, Upvote, Group]
+        entities: [User, Post, Upvote, Group, Member]
     })
 
     await connection.runMigrations()
 
     // await User.delete({})
-    // await Channel.delete({})
-    // await Message.delete({})
+    // await Post.delete({})
+    // await Upvote.delete({})
     // await Group.delete({})
 
     const app = express()
@@ -76,7 +78,14 @@ const main = async () => {
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [TestResolver, UserResolver, PostResolver, VoteResolver, GroupResolver],
+            resolvers: [
+                TestResolver, 
+                UserResolver, 
+                PostResolver, 
+                VoteResolver, 
+                GroupResolver, 
+                MemberResolver
+            ],
             validate: false
         }),
         // * context is an object that is accessible to all the resolvers

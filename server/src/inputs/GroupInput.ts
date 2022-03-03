@@ -1,4 +1,4 @@
-import { Field, InputType } from "type-graphql";
+import { Field, InputType, Int } from "type-graphql";
 
 @InputType()
 export class GroupInput {
@@ -7,4 +7,7 @@ export class GroupInput {
 
     @Field()
     description: string;
+
+    @Field(() => Int)
+    member: number;
 }

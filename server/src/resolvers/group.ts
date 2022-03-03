@@ -42,7 +42,8 @@ export class GroupResolver {
         try {
             const result = await getConnection().createQueryBuilder().insert().into(Group).values({
                 name: options.name,
-                description: options.description
+                description: options.description,
+                member: options.member
             }).returning('*').execute()
             group = result.raw[0]
         } catch (err) {

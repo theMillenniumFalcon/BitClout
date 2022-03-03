@@ -1,6 +1,6 @@
-mutation CreateGroup($name: String!, $description: String!) {
+mutation CreateGroup($name: String!, $description: String!, $member: Int!) {
     createGroup(
-      options: { name: $name, description: $description }
+      options: { name: $name, description: $description, member: $member }
     ) {
       errors {
         field
@@ -10,6 +10,7 @@ mutation CreateGroup($name: String!, $description: String!) {
         id
         name
         description
+        member
       }
     }
   }

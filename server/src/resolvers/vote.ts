@@ -1,14 +1,12 @@
 import { Arg, Resolver, Mutation, Ctx, UseMiddleware, Int } from "type-graphql"
 import { Context } from "../types/types"
-import { Post } from "../entities/Post"
 import { Authentication } from "../middleware/Authentication";
 import { getConnection } from "typeorm"
 import { Upvote } from "../entities/Upvote"
 
-@Resolver(Post)
+@Resolver()
 export class VoteResolver {
 
-    // * VOTES
     @Mutation(() => Boolean)
     @UseMiddleware(Authentication)
     async vote(

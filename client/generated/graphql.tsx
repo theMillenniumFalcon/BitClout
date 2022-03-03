@@ -26,12 +26,14 @@ export type Group = {
   createdAt: Scalars['String'];
   description: Scalars['String'];
   id: Scalars['Float'];
+  member: Scalars['Float'];
   name: Scalars['String'];
   updatedAt: Scalars['String'];
 };
 
 export type GroupInput = {
   description: Scalars['String'];
+  member: Scalars['Int'];
   name: Scalars['String'];
 };
 
@@ -50,6 +52,7 @@ export type Mutation = {
   forgotPassword: Scalars['Boolean'];
   login: UserResponse;
   logout: Scalars['Boolean'];
+  member: Scalars['Boolean'];
   register: UserResponse;
   resetPassword: UserResponse;
   updateGroup?: Maybe<Group>;
@@ -85,6 +88,12 @@ export type MutationForgotPasswordArgs = {
 
 export type MutationLoginArgs = {
   options: UserLoginInput;
+};
+
+
+export type MutationMemberArgs = {
+  groupId: Scalars['Int'];
+  members: Scalars['Int'];
 };
 
 
@@ -128,6 +137,7 @@ export type Post = {
   createdAt: Scalars['String'];
   creator: User;
   creatorId: Scalars['Float'];
+  groupId: Scalars['Float'];
   id: Scalars['Float'];
   points: Scalars['Float'];
   text: Scalars['String'];
@@ -137,6 +147,7 @@ export type Post = {
 };
 
 export type PostInput = {
+  groupId: Scalars['Int'];
   text: Scalars['String'];
   title: Scalars['String'];
 };
@@ -202,18 +213,20 @@ export type UserResponse = {
 export type CreateGroupMutationVariables = Exact<{
   name: Scalars['String'];
   description: Scalars['String'];
+  member: Scalars['Int'];
 }>;
 
 
-export type CreateGroupMutation = { __typename?: 'Mutation', createGroup: { __typename?: 'GroupResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, group?: { __typename?: 'Group', id: number, name: string, description: string } | null | undefined } };
+export type CreateGroupMutation = { __typename?: 'Mutation', createGroup: { __typename?: 'GroupResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, group?: { __typename?: 'Group', id: number, name: string, description: string, member: number } | null | undefined } };
 
 export type CreatePostMutationVariables = Exact<{
   title: Scalars['String'];
   text: Scalars['String'];
+  groupId: Scalars['Int'];
 }>;
 
 
-export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'PostResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, post?: { __typename?: 'Post', id: number, title: string } | null | undefined } };
+export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'PostResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, post?: { __typename?: 'Post', id: number, title: string, text: string } | null | undefined } };
 
 export type DeletePostMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -310,8 +323,8 @@ export type UserLoggedInQuery = { __typename?: 'Query', userLoggedIn?: { __typen
 
 
 export const CreateGroupDocument = gql`
-    mutation CreateGroup($name: String!, $description: String!) {
-  createGroup(options: {name: $name, description: $description}) {
+    mutation CreateGroup($name: String!, $description: String!, $member: Int!) {
+  createGroup(options: {name: $name, description: $description, member: $member}) {
     errors {
       field
       message
@@ -320,6 +333,7 @@ export const CreateGroupDocument = gql`
       id
       name
       description
+      member
     }
   }
 }
@@ -329,8 +343,8 @@ export function useCreateGroupMutation() {
   return Urql.useMutation<CreateGroupMutation, CreateGroupMutationVariables>(CreateGroupDocument);
 };
 export const CreatePostDocument = gql`
-    mutation CreatePost($title: String!, $text: String!) {
-  createPost(options: {title: $title, text: $text}) {
+    mutation CreatePost($title: String!, $text: String!, $groupId: Int!) {
+  createPost(options: {title: $title, text: $text, groupId: $groupId}) {
     errors {
       field
       message
@@ -338,6 +352,7 @@ export const CreatePostDocument = gql`
     post {
       id
       title
+      text
     }
   }
 }

@@ -2,6 +2,7 @@ import {Entity, PrimaryGeneratedColumn, CreateDateColumn, Column, UpdateDateColu
 import { Field, Int, ObjectType } from "type-graphql";
 import { User } from "./User";
 import { Upvote } from "./Upvote";
+import { Group } from "./Group";
 
 @ObjectType() // * to convert the class to a graphql type
 @Entity()
@@ -29,12 +30,19 @@ export class Post extends BaseEntity {
   @Column()
   creatorId: number;
 
+  @Field()
+  @Column()
+  groupId: number;
+
   @Field(() => User)
   @ManyToOne(() => User, user => user.posts)
   creator: User;
 
   @OneToMany(() => Upvote, upvote => upvote.post)
   upvotes: Upvote[];
+
+  @ManyToOne(() => Group, group => group.posts)
+  group: Group;
 
   @Field(() => String)
   @CreateDateColumn()

@@ -1,6 +1,6 @@
-mutation CreatePost($title: String!, $text: String! ) {
+mutation CreatePost($title: String!, $text: String!, $groupId: Int!) {
     createPost(
-      options: { title: $title, text: $text }
+      options: { title: $title, text: $text, groupId: $groupId }
     ) {
       errors {
         field
@@ -9,6 +9,7 @@ mutation CreatePost($title: String!, $text: String! ) {
       post {
         id
         title
+        text
       }
     }
   }
