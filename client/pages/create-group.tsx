@@ -4,12 +4,19 @@ import { createUrqlClient } from '../utils/createUrqlClient'
 import { Box, Button, Text } from '@chakra-ui/react'
 import { Formik, Form } from 'formik'
 import InputForm from '../components/InputForm'
-import { Textarea } from '@chakra-ui/react'
-import { useCreatePostMutation, useUserLoggedInQuery } from '../generated/graphql'
+import { useCreateGroupMutation, useUserLoggedInQuery } from '../generated/graphql'
 import { useRouter } from "next/router"
 import Errors from '../utils/Errors'
 
 const CreateGroup: React.FC<{}> = ({ }) => {
+    const router = useRouter()
+    const [{ data, fetching }] = useUserLoggedInQuery()
+    useEffect(() => {
+        if (!data?.userLoggedIn) {
+            router.replace('/login?next=' + router.pathname)
+        }
+    }, [fetching, data, router])
+    const [, createGroup] = useCreateGroupMutation()
 
     return (
         <Box display="flex" alignItems="center" justifyContent="center" height="100vh"
@@ -18,7 +25,16 @@ const CreateGroup: React.FC<{}> = ({ }) => {
             bgGradient='linear(to-b, rgba(0, 0, 0, 0) 0%, rgba(90, 0, 0, 1) 100%)'
         >
             <Box w="700px" mx="auto" bg="white" p={7} borderRadius='20px'>
-                <Formik initialValues={{ name: '' }} onSubmit={async (values, { setErrors }) => {
+                <Formik initialValues={{ name: '', description: '' }} onSubmit={async (values, { setErrors }) => {
+                    const response = await createGroup(values)
+                    const { error } = response
+                    if (response.data?.createGroup.errors) {
+                        setErrors(Errors(response.data.createGroup.errors))
+                    } if (error?.message.includes('not authenticated')) {
+                        router.replace('/login')
+                    } else if (response.data?.createGroup.group) {
+                        router.push('/')
+                    }
 
                 }}>
                     {({ isSubmitting }) => (

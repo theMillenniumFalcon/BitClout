@@ -29,11 +29,11 @@ export class GroupResolver {
         @Arg('options') options: GroupInput,
         @Ctx() { }: Context
     ): Promise<GroupResponse> {
-        if (options.name.length <= 2 || options.name.length >= 10) {
+        if (options.name.length <= 2 || options.name.length >= 20) {
             return {
                 errors: [{
                     field: 'name',
-                    message: "group name should be between two and ten characters long",
+                    message: "group name should be between two and twenty characters long",
                 }]
             }
         }

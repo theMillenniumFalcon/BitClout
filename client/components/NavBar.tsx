@@ -34,13 +34,15 @@ const Navbar: React.FC<NavbarProps> = ({ }) => {
         body = (
             <Box display="flex" alignItems="center" justifyContent="space-between">
                 <Box mr={5} color='black'>{data.userLoggedIn.username}</Box>
-                <Button size='md' height='40px' width='110px' onClick={() => logout()} isLoading={LogoutFetching} colorScheme='purple'>Logout</Button>
+                <Button size='md' height='40px' width='110px' onClick={() => logout()} isLoading={LogoutFetching} colorScheme='purple'>
+                    Logout
+                </Button>
             </Box>
         )
     }
 
     return (
-        <Flex zIndex={1} position="sticky" top={0} bg="pink" p={3}>
+        <Flex zIndex={1} position="sticky" top={0} bg="pink" height="70px">
             <Flex flex={1} m="auto" align="center" maxW={1000}>
                 <NextLink href="/">
                     <Link style={{ textDecoration: "none" }}>

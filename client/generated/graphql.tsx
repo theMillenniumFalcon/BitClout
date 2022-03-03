@@ -205,7 +205,7 @@ export type CreateGroupMutationVariables = Exact<{
 }>;
 
 
-export type CreateGroupMutation = { __typename?: 'Mutation', createGroup: { __typename?: 'GroupResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, group?: { __typename?: 'Group', id: number, name: string } | null | undefined } };
+export type CreateGroupMutation = { __typename?: 'Mutation', createGroup: { __typename?: 'GroupResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, group?: { __typename?: 'Group', id: number, name: string, description: string } | null | undefined } };
 
 export type CreatePostMutationVariables = Exact<{
   title: Scalars['String'];
@@ -319,6 +319,7 @@ export const CreateGroupDocument = gql`
     group {
       id
       name
+      description
     }
   }
 }

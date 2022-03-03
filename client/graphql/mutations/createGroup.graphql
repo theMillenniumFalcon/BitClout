@@ -9,6 +9,7 @@ mutation CreateGroup($name: String!, $description: String!) {
       group {
         id
         name
+        description
       }
     }
   }
