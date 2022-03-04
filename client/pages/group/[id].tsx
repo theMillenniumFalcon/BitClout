@@ -58,8 +58,14 @@ const Group: React.FC<{}> = ({ }) => {
                         <Box display="flex" alignItems="center" justifyContent="space-between">
                             <Box>
                                 <Badge variant='outline' colorScheme='red' mr={4}>
-                                    <Text fontSize='sm'>69</Text>
-                                    <Text fontSize='xs'>members</Text>
+                                    <Text fontSize='sm'>{data?.group?.membersNumber}</Text>
+                                    <Text fontSize='xs'>
+                                        {data?.group?.membersNumber !== 1 ? (
+                                            <div>members</div>
+                                        ) : (
+                                            <div>member</div>
+                                        )}
+                                    </Text>
                                 </Badge>
                             </Box>
                             <Button

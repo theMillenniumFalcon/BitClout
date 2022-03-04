@@ -26,14 +26,13 @@ export type Group = {
   createdAt: Scalars['String'];
   description: Scalars['String'];
   id: Scalars['Float'];
-  member: Scalars['Float'];
+  membersNumber: Scalars['Float'];
   name: Scalars['String'];
   updatedAt: Scalars['String'];
 };
 
 export type GroupInput = {
   description: Scalars['String'];
-  member: Scalars['Int'];
   name: Scalars['String'];
 };
 
@@ -213,11 +212,10 @@ export type UserResponse = {
 export type CreateGroupMutationVariables = Exact<{
   name: Scalars['String'];
   description: Scalars['String'];
-  member: Scalars['Int'];
 }>;
 
 
-export type CreateGroupMutation = { __typename?: 'Mutation', createGroup: { __typename?: 'GroupResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, group?: { __typename?: 'Group', id: number, name: string, description: string, member: number } | null | undefined } };
+export type CreateGroupMutation = { __typename?: 'Mutation', createGroup: { __typename?: 'GroupResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, group?: { __typename?: 'Group', id: number, name: string, description: string } | null | undefined } };
 
 export type CreatePostMutationVariables = Exact<{
   title: Scalars['String'];
@@ -294,12 +292,12 @@ export type GroupQueryVariables = Exact<{
 }>;
 
 
-export type GroupQuery = { __typename?: 'Query', group?: { __typename?: 'Group', id: number, createdAt: string, updatedAt: string, name: string, description: string } | null | undefined };
+export type GroupQuery = { __typename?: 'Query', group?: { __typename?: 'Group', id: number, createdAt: string, updatedAt: string, name: string, description: string, membersNumber: number } | null | undefined };
 
 export type GroupsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GroupsQuery = { __typename?: 'Query', groups?: Array<{ __typename?: 'Group', id: number, name: string, description: string }> | null | undefined };
+export type GroupsQuery = { __typename?: 'Query', groups?: Array<{ __typename?: 'Group', id: number, name: string, description: string, membersNumber: number }> | null | undefined };
 
 export type PostQueryVariables = Exact<{
   id: Scalars['Int'];
@@ -323,8 +321,8 @@ export type UserLoggedInQuery = { __typename?: 'Query', userLoggedIn?: { __typen
 
 
 export const CreateGroupDocument = gql`
-    mutation CreateGroup($name: String!, $description: String!, $member: Int!) {
-  createGroup(options: {name: $name, description: $description, member: $member}) {
+    mutation CreateGroup($name: String!, $description: String!) {
+  createGroup(options: {name: $name, description: $description}) {
     errors {
       field
       message
@@ -333,7 +331,6 @@ export const CreateGroupDocument = gql`
       id
       name
       description
-      member
     }
   }
 }
@@ -472,6 +469,7 @@ export const GroupDocument = gql`
     updatedAt
     name
     description
+    membersNumber
   }
 }
     `;
@@ -485,6 +483,7 @@ export const GroupsDocument = gql`
     id
     name
     description
+    membersNumber
   }
 }
     `;

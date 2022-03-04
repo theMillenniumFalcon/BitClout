@@ -3,5 +3,6 @@ query Groups {
     id
     name
     description
+    membersNumber
   }
 }

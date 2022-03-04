@@ -1,5 +1,5 @@
 import { withUrqlClient } from "next-urql";
-import { useDeletePostMutation, useGroupsQuery, usePostsQuery, useUserLoggedInQuery } from "../generated/graphql";
+import { useDeletePostMutation, useGroupQuery, useGroupsQuery, usePostsQuery, useUserLoggedInQuery } from "../generated/graphql";
 import { Box, Link, Stack, Heading, Button, Badge, Flex, Text } from '@chakra-ui/react'
 import { createUrqlClient } from "../utils/createUrqlClient";
 import NextLink from 'next/link'
@@ -14,6 +14,7 @@ const Home = () => {
   const [, deletePost] = useDeletePostMutation()
   const [{ data: userLoggedInData }] = useUserLoggedInQuery()
   const [{ data: groupsData, fetching: groupsFetching }] = useGroupsQuery()
+  const [{ data: groupData }] = useGroupQuery({})
 
   if (!fetching && !data) {
     return (
@@ -111,22 +112,28 @@ const Home = () => {
                   <Stack spacing={8}>
                     {groupsData?.groups?.map((group) => !group ? null : (
                       <Flex key={group.id} p={5} shadow="md" borderWidth="1px" align="center" justify="space-between">
-                          <Box>
-                            <Heading fontSize="xl" mb={2}>
-                              <NextLink href={`/group/${encodeURIComponent(group.id)}`} key={group.id}>
-                                <Link color='black' mr={5}>
-                                  {group.name}
-                                </Link>
-                              </NextLink>
-                            </Heading>
-                            <Text fontSize='md'>{group.description}</Text>
-                          </Box>
-                          <Box>
-                            <Badge variant='outline' colorScheme='red' mr={4}>
-                              <Text fontSize='sm'>69</Text>
-                              <Text fontSize='xs'>members</Text>
-                            </Badge>
-                          </Box>
+                        <Box>
+                          <Heading fontSize="xl" mb={2}>
+                            <NextLink href={`/group/${encodeURIComponent(group.id)}`} key={group.id}>
+                              <Link color='black' mr={5}>
+                                {group.name}
+                              </Link>
+                            </NextLink>
+                          </Heading>
+                          <Text fontSize='md'>{group.description}</Text>
+                        </Box>
+                        <Box>
+                          <Badge variant='outline' colorScheme='red' mr={4}>
+                            <Text fontSize='sm'>{group?.membersNumber}</Text>
+                            <Text fontSize='xs'>
+                              {group?.membersNumber !== 1 ? (
+                                <div>members</div>
+                              ) : (
+                                <div>member</div>
+                              )}
+                            </Text>
+                          </Badge>
+                        </Box>
                       </Flex>
                     ))}
                   </Stack>
@@ -141,15 +148,6 @@ const Home = () => {
                 )}
               </>
             )}
-            {/* {data && data.posts.hasMore ? (
-              <Button my={5} isLoading={fetching} colorScheme='red' variant='outline' onClick={() => {
-                setVariables({
-                  limit: variables.limit, cursor: data.posts.posts[data.posts.posts.length - 1].createdAt
-                })
-              }}>
-                Load more
-              </Button>
-            ) : null} */}
           </Box>
         </Box>
       </Box>

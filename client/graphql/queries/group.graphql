@@ -5,5 +5,6 @@ query Group($id: Int!) {
         updatedAt
         name
         description
+        membersNumber
     }
 }
