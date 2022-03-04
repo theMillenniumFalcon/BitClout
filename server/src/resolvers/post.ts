@@ -68,7 +68,7 @@ export class PostResolver {
     // * SINGLE POST
     @Query(() => Post, { nullable: true })
     post(@Arg("id", () => Int) id: number): Promise<Post | undefined> {
-        return Post.findOne(id, { relations: ["creator"] })
+        return Post.findOne(id, { relations: ["creator", "group"] })
     }
 
     // * CREATE POST

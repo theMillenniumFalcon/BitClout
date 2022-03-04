@@ -11,5 +11,10 @@ query Post($id: Int!) {
             id
             username
         }
+        group {
+            id
+            name
+            description
+        }
     }
 }

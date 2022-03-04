@@ -15,13 +15,13 @@ const Home = () => {
   const [{ data: userLoggedInData }] = useUserLoggedInQuery()
   const [{ data: groupsData, fetching: groupsFetching }] = useGroupsQuery()
 
-  if (!fetching && !data) {
-    return (
-      <Box height="100vh" width="100vw">
-        <QueryFail />
-      </Box>
-    )
-  }
+  // if (!fetching && !data) {
+  //   return (
+  //     <Box height="100vh" width="100vw">
+  //       <QueryFail />
+  //     </Box>
+  //   )
+  // }
 
   return (
     <>

@@ -40,14 +40,12 @@ const CreatePost: React.FC<{}> = ({ }) => {
                 }}>
                     {({ isSubmitting }) => (
                         <Box>
-                            <Box>
+                            <Form>
                                 <Select placeholder='Select a group' variant='filled' width="200px" mb={3}>
                                     {groupsData?.groups?.map((group) => !group ? null : (
-                                        <option value='option1'>{group?.name}</option>
+                                        <option value={group?.id}>{group?.name}</option>
                                     ))}
                                 </Select>
-                            </Box>
-                            <Form>
                                 <Text mb='7px' fontSize='md'>Title</Text>
                                 <InputForm name="title" placeholder="title" label="" />
                                 <Box mt={4}>

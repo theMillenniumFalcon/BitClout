@@ -137,6 +137,7 @@ export type Post = {
   createdAt: Scalars['String'];
   creator: User;
   creatorId: Scalars['Float'];
+  group: Group;
   groupId: Scalars['Float'];
   id: Scalars['Float'];
   points: Scalars['Float'];
@@ -320,7 +321,7 @@ export type PostQueryVariables = Exact<{
 }>;
 
 
-export type PostQuery = { __typename?: 'Query', post?: { __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, points: number, text: string, voteStatus?: number | null | undefined, creator: { __typename?: 'User', id: number, username: string } } | null | undefined };
+export type PostQuery = { __typename?: 'Query', post?: { __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, points: number, text: string, voteStatus?: number | null | undefined, creator: { __typename?: 'User', id: number, username: string }, group: { __typename?: 'Group', id: number, name: string, description: string } } | null | undefined };
 
 export type PostsQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -328,7 +329,7 @@ export type PostsQueryVariables = Exact<{
 }>;
 
 
-export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginationPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, points: number, voteStatus?: number | null | undefined, creator: { __typename?: 'User', id: number, username: string } }> } };
+export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginationPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, points: number, voteStatus?: number | null | undefined, creator: { __typename?: 'User', id: number, username: string }, group: { __typename?: 'Group', id: number, name: string, description: string } }> } };
 
 export type UserLoggedInQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -541,6 +542,11 @@ export const PostDocument = gql`
       id
       username
     }
+    group {
+      id
+      name
+      description
+    }
   }
 }
     `;
@@ -562,6 +568,11 @@ export const PostsDocument = gql`
       creator {
         id
         username
+      }
+      group {
+        id
+        name
+        description
       }
     }
   }

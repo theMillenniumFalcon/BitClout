@@ -12,6 +12,11 @@ query Posts($limit: Int!, $cursor: String) {
         id
         username
       }
+      group {
+        id
+        name
+        description
+      }
     }
   }
 }
