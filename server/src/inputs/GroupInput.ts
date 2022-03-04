@@ -9,5 +9,5 @@ export class GroupInput {
     description: string;
 
     @Field(() => Int)
-    member: number;
+    membersNumber: number;
 }

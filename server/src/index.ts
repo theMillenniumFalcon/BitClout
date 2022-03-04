@@ -21,7 +21,6 @@ import { VoteResolver } from "./resolvers/vote"
 import { Group } from "./entities/Group"
 import { GroupResolver } from "./resolvers/group"
 import { Member } from "./entities/Member"
-import { MemberResolver } from "./resolvers/member"
 
 const PORT = process.env.PORT || 4000
 
@@ -83,8 +82,7 @@ const main = async () => {
                 UserResolver, 
                 PostResolver, 
                 VoteResolver, 
-                GroupResolver, 
-                MemberResolver
+                GroupResolver
             ],
             validate: false
         }),

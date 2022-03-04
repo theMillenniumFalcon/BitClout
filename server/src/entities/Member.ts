@@ -9,7 +9,7 @@ import { Group } from "./Group";
 @Entity()
 export class Member extends BaseEntity {
   @Field()
-  @Column({ type: "int", default: 0 })
+  @Column({ type: "int" })
   members: number;
 
   @Field()

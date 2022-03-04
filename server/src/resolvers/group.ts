@@ -5,9 +5,41 @@ import { GroupResponse } from "../responses/GroupResponse"
 import { Group } from "../entities/Group"
 import { Authentication } from "../middleware/Authentication";
 import { getConnection } from "typeorm"
+import { Member } from "../entities/Member"
 
-@Resolver()
+@Resolver(Group)
 export class GroupResolver {
+
+    @Mutation(() => Boolean)
+    @UseMiddleware(Authentication)
+    async member(
+        @Arg('groupId', () => Int) groupId: number,
+        @Arg('members', () => Int) members: number,
+        @Ctx() { req }: Context
+    ) {
+        const isMember = members > 0
+        const realMember = isMember ? 1 : 0
+        const { userId } = req.session
+
+        await Member.insert({ userId, groupId, members: realMember })
+
+        await Group.update({ id: groupId }, { membersNumber: members + 1 })
+
+        // await getConnection().query(`
+        //     START TRANSACTION;
+
+        //     insert into member ("userId", "groupId", members)
+        //     values(${userId}, ${groupId}, ${realMember});
+
+        //     update group
+        //     set membersNumber = membersNumber + ${realMember}
+        //     where id = ${groupId};
+
+        //     COMMIT;
+        // `)
+
+        return true
+    }
 
     // * ALL GROUPS
     @Query(() => [Group], { nullable: true })
@@ -43,7 +75,7 @@ export class GroupResolver {
             const result = await getConnection().createQueryBuilder().insert().into(Group).values({
                 name: options.name,
                 description: options.description,
-                member: options.member
+                membersNumber: options.membersNumber
             }).returning('*').execute()
             group = result.raw[0]
         } catch (err) {
