@@ -92,6 +92,9 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                 }
               )
             },
+            deleteGroup: (_result, args, cache, info) => {
+              cache.invalidate({ __typename: "Group", id: (args as any).id })
+            },
             deletePost: (_result, args, cache, info) => {
               cache.invalidate({ __typename: "Post", id: (args as any).id })
             },
@@ -123,6 +126,9 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                 )
               }
             },
+            member: (_result, args, cache, info) => {
+              
+            },
             createPost: (_result, args, cache, info) => {
               const allFields = cache.inspectFields("Query")
               const fieldInfos = allFields.filter(
@@ -130,6 +136,15 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
               )
               fieldInfos.forEach((fi) => {
                 cache.invalidate("Query", "posts", fi.arguments)
+              })
+            },
+            createGroup: (_result, args, cache, info) => {
+              const allFields = cache.inspectFields("Query")
+              const fieldInfos = allFields.filter(
+                (info) => info.fieldName === "groups"
+              )
+              fieldInfos.forEach((fi) => {
+                cache.invalidate("Query", "groups", fi.arguments)
               })
             },
             logout: (_result, args, cache, info) => {

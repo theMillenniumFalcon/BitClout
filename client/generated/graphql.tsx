@@ -24,6 +24,7 @@ export type FieldError = {
 export type Group = {
   __typename?: 'Group';
   createdAt: Scalars['String'];
+  creatorId: Scalars['Float'];
   description: Scalars['String'];
   id: Scalars['Float'];
   membersNumber: Scalars['Float'];
@@ -71,7 +72,7 @@ export type MutationCreatePostArgs = {
 
 
 export type MutationDeleteGroupArgs = {
-  id: Scalars['Float'];
+  id: Scalars['Int'];
 };
 
 
@@ -226,6 +227,13 @@ export type CreatePostMutationVariables = Exact<{
 
 export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'PostResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, post?: { __typename?: 'Post', id: number, title: string, text: string } | null | undefined } };
 
+export type DeleteGroupMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type DeleteGroupMutation = { __typename?: 'Mutation', deleteGroup: boolean };
+
 export type DeletePostMutationVariables = Exact<{
   id: Scalars['Int'];
 }>;
@@ -252,6 +260,14 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
+
+export type MemberMutationVariables = Exact<{
+  members: Scalars['Int'];
+  groupId: Scalars['Int'];
+}>;
+
+
+export type MemberMutation = { __typename?: 'Mutation', member: boolean };
 
 export type RegisterMutationVariables = Exact<{
   username: Scalars['String'];
@@ -292,12 +308,12 @@ export type GroupQueryVariables = Exact<{
 }>;
 
 
-export type GroupQuery = { __typename?: 'Query', group?: { __typename?: 'Group', id: number, createdAt: string, updatedAt: string, name: string, description: string, membersNumber: number } | null | undefined };
+export type GroupQuery = { __typename?: 'Query', group?: { __typename?: 'Group', id: number, createdAt: string, updatedAt: string, name: string, description: string, membersNumber: number, creatorId: number } | null | undefined };
 
 export type GroupsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GroupsQuery = { __typename?: 'Query', groups?: Array<{ __typename?: 'Group', id: number, name: string, description: string, membersNumber: number }> | null | undefined };
+export type GroupsQuery = { __typename?: 'Query', groups?: Array<{ __typename?: 'Group', id: number, name: string, description: string, membersNumber: number, creatorId: number }> | null | undefined };
 
 export type PostQueryVariables = Exact<{
   id: Scalars['Int'];
@@ -358,6 +374,15 @@ export const CreatePostDocument = gql`
 export function useCreatePostMutation() {
   return Urql.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument);
 };
+export const DeleteGroupDocument = gql`
+    mutation DeleteGroup($id: Int!) {
+  deleteGroup(id: $id)
+}
+    `;
+
+export function useDeleteGroupMutation() {
+  return Urql.useMutation<DeleteGroupMutation, DeleteGroupMutationVariables>(DeleteGroupDocument);
+};
 export const DeletePostDocument = gql`
     mutation DeletePost($id: Int!) {
   deletePost(id: $id)
@@ -402,6 +427,15 @@ export const LogoutDocument = gql`
 
 export function useLogoutMutation() {
   return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
+};
+export const MemberDocument = gql`
+    mutation Member($members: Int!, $groupId: Int!) {
+  member(members: $members, groupId: $groupId)
+}
+    `;
+
+export function useMemberMutation() {
+  return Urql.useMutation<MemberMutation, MemberMutationVariables>(MemberDocument);
 };
 export const RegisterDocument = gql`
     mutation Register($username: String!, $email: String!, $password: String!) {
@@ -470,6 +504,7 @@ export const GroupDocument = gql`
     name
     description
     membersNumber
+    creatorId
   }
 }
     `;
@@ -484,6 +519,7 @@ export const GroupsDocument = gql`
     name
     description
     membersNumber
+    creatorId
   }
 }
     `;

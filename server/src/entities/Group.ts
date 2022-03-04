@@ -19,6 +19,10 @@ export class Group extends BaseEntity {
   description!: string;
 
   @Field()
+  @Column()
+  creatorId: number;
+
+  @Field()
   @Column({ type: "int", default: 1 })
   membersNumber!: number;
 

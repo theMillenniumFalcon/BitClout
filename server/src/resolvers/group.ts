@@ -17,11 +17,9 @@ export class GroupResolver {
         @Arg('members', () => Int) members: number,
         @Ctx() { req }: Context
     ) {
-        const isMember = members > 0
-        const realMember = isMember ? 1 : 0
         const { userId } = req.session
 
-        await Member.insert({ userId, groupId, members: realMember })
+        await Member.insert({ userId, groupId, members })
 
         await Group.update({ id: groupId }, { membersNumber: members + 1 })
 
@@ -59,7 +57,7 @@ export class GroupResolver {
     @UseMiddleware(Authentication)
     async createGroup(
         @Arg('options') options: GroupInput,
-        @Ctx() { }: Context
+        @Ctx() { req }: Context
     ): Promise<GroupResponse> {
         if (options.name.length <= 2 || options.name.length >= 20) {
             return {
@@ -74,7 +72,8 @@ export class GroupResolver {
         try {
             const result = await getConnection().createQueryBuilder().insert().into(Group).values({
                 name: options.name,
-                description: options.description
+                description: options.description,
+                creatorId: req.session.userId
             }).returning('*').execute()
             group = result.raw[0]
         } catch (err) {
@@ -113,13 +112,20 @@ export class GroupResolver {
     @Mutation(() => Boolean)
     @UseMiddleware(Authentication)
     async deleteGroup(
-        @Arg('id') id: number
+        @Arg('id', () => Int) id: number,
+        @Ctx() { req }: Context
     ): Promise<boolean> {
-        try {
-            await Group.delete(id)
-        } catch {
+        const group = await Group.findOne(id)
+        if (!group) {
             return false
         }
+        if (group.creatorId !== req.session.userId) {
+            throw new Error("not authorized")
+        }
+
+        await Member.delete({ groupId: id })
+        await Group.delete({ id })
+        
         return true
     }
 

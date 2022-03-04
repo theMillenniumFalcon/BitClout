@@ -1,5 +1,5 @@
 import { withUrqlClient } from "next-urql";
-import { useDeletePostMutation, useGroupQuery, useGroupsQuery, usePostsQuery, useUserLoggedInQuery } from "../generated/graphql";
+import { useDeletePostMutation, useGroupsQuery, usePostsQuery, useUserLoggedInQuery } from "../generated/graphql";
 import { Box, Link, Stack, Heading, Button, Badge, Flex, Text } from '@chakra-ui/react'
 import { createUrqlClient } from "../utils/createUrqlClient";
 import NextLink from 'next/link'
@@ -14,7 +14,6 @@ const Home = () => {
   const [, deletePost] = useDeletePostMutation()
   const [{ data: userLoggedInData }] = useUserLoggedInQuery()
   const [{ data: groupsData, fetching: groupsFetching }] = useGroupsQuery()
-  const [{ data: groupData }] = useGroupQuery({})
 
   if (!fetching && !data) {
     return (
@@ -102,7 +101,7 @@ const Home = () => {
         <Box w="40%" mx="50px" p={5} zIndex={1} position="sticky"
           style={{ position: "-webkit-sticky", top: "70px" }}
         >
-          <Heading as='h3' size='lg' mt={2} mb={4}>Your Groups:</Heading>
+          <Heading as='h3' size='lg' mt={2} mb={4}>Available Groups:</Heading>
           <Box>
             {groupsFetching && !groupsData ? (
               <div>Loading...</div>
@@ -110,38 +109,39 @@ const Home = () => {
               <>
                 {userLoggedInData?.userLoggedIn?.id ? (
                   <Stack spacing={8}>
-                    {groupsData?.groups?.map((group) => !group ? null : (
-                      <Flex key={group.id} p={5} shadow="md" borderWidth="1px" align="center" justify="space-between">
-                        <Box>
-                          <Heading fontSize="xl" mb={2}>
-                            <NextLink href={`/group/${encodeURIComponent(group.id)}`} key={group.id}>
-                              <Link color='black' mr={5}>
-                                {group.name}
-                              </Link>
-                            </NextLink>
-                          </Heading>
-                          <Text fontSize='md'>{group.description}</Text>
-                        </Box>
-                        <Box>
-                          <Badge variant='outline' colorScheme='red' mr={4}>
-                            <Text fontSize='sm'>{group?.membersNumber}</Text>
-                            <Text fontSize='xs'>
-                              {group?.membersNumber !== 1 ? (
-                                <div>members</div>
-                              ) : (
-                                <div>member</div>
-                              )}
-                            </Text>
-                          </Badge>
-                        </Box>
-                      </Flex>
-                    ))}
+                    {groupsData?.groups?.map((group) => (
+                      !group ? null : (
+                        <Flex key={group.id} p={5} shadow="md" borderWidth="1px" align="center" justify="space-between">
+                          <Box>
+                            <Heading fontSize="xl" mb={2}>
+                              <NextLink href={`/group/${encodeURIComponent(group.id)}`} key={group.id}>
+                                <Link color='black' mr={5}>
+                                  {group.name}
+                                </Link>
+                              </NextLink>
+                            </Heading>
+                            <Text fontSize='md'>{group.description}</Text>
+                          </Box>
+                          <Box>
+                            <Badge variant='outline' colorScheme='red' mr={4}>
+                              <Text fontSize='sm'>{group?.membersNumber}</Text>
+                              <Text fontSize='xs'>
+                                {group?.membersNumber !== 1 ? (
+                                  <div>members</div>
+                                ) : (
+                                  <div>member</div>
+                                )}
+                              </Text>
+                            </Badge>
+                          </Box>
+                        </Flex>
+                      )))}
                   </Stack>
                 ) : (
                   <Stack>
                     <Flex p={5} shadow="md" borderWidth="1px">
                       <Text fontSize='md'>
-                        Please login to see your groups...
+                        Please login to see available groups...
                       </Text>
                     </Flex>
                   </Stack>

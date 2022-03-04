@@ -4,5 +4,6 @@ query Groups {
     name
     description
     membersNumber
+    creatorId
   }
 }

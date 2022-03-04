@@ -1,0 +1,3 @@
+mutation Member($members: Int!, $groupId: Int!) {
+  member(members: $members, groupId: $groupId)
+}

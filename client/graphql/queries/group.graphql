@@ -6,5 +6,6 @@ query Group($id: Int!) {
         name
         description
         membersNumber
+        creatorId
     }
 }
