@@ -26,6 +26,7 @@ export class Group extends BaseEntity {
   @Column({ type: "int", default: 1 })
   membersNumber!: number;
 
+  @Field(() => [Post])
   @OneToMany(() => Post, post => post.group)
   posts: Post[];
 

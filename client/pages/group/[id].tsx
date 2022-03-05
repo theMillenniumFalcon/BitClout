@@ -3,10 +3,13 @@ import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../../utils/createUrqlClient'
 import { useRouter } from 'next/router'
 import { useDeleteGroupMutation, useGroupQuery, useMemberMutation, useUserLoggedInQuery } from '../../generated/graphql'
-import { Box, Button, Heading, Text, IconButton, Badge } from '@chakra-ui/react'
+import { Box, Button, Heading, Text, IconButton, Badge, Stack, Flex } from '@chakra-ui/react'
 import { DeleteIcon } from '@chakra-ui/icons'
 import NavBar from "../../components/NavBar"
 import NoPage from '../../components/NoPage'
+import Link from 'next/link'
+import Upvote from '../../components/Upvote'
+import NextLink from 'next/link'
 
 interface GroupProps { }
 
@@ -96,8 +99,8 @@ const Group: React.FC<{}> = ({ }) => {
                                         size='lg'
                                         height='45px'
                                         icon={<DeleteIcon />}
-                                        onClick={() => { 
-                                            deleteGroup({ id: (data?.group?.id) as any})
+                                        onClick={() => {
+                                            deleteGroup({ id: (data?.group?.id) as any })
                                             router.replace('/')
                                         }}
                                     />
@@ -105,7 +108,22 @@ const Group: React.FC<{}> = ({ }) => {
                             </Box>
                         </Box>
                     </Box>
-                    <Text fontSize='md'>{data?.group?.description}</Text>
+                    <Text fontSize='md' mb={3}>{data?.group?.description}</Text>
+                    <Stack spacing={8}>
+                        {data?.group.posts?.map((post) => !post ? null : (
+                            <Flex key={post.id} p={5} shadow="md" borderWidth="1px">
+                                <Box width="100%" display="flex" alignItems="center" justifyContent="space-between">
+                                    <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+                                        <Heading fontSize="xl">
+                                            <NextLink href={`/post/${encodeURIComponent(post.id)}`} key={post.id}>
+                                                {post.title}
+                                            </NextLink>
+                                        </Heading>
+                                    </Box>
+                                </Box>
+                            </Flex>
+                        ))}
+                    </Stack>
                 </Box>
             </Box>
         </>

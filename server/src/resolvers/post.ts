@@ -1,5 +1,5 @@
 import { PostInput } from "../inputs/PostInput"
-import { Arg, Query, Resolver, Mutation, Ctx, UseMiddleware, Int, ObjectType, Field } from "type-graphql"
+import { Arg, Query, Resolver, Mutation, Ctx, UseMiddleware, Int } from "type-graphql"
 import { Context } from "../types/types"
 import { PostResponse } from "../responses/PostResponse"
 import { Post } from "../entities/Post"
@@ -7,62 +7,13 @@ import { Authentication } from "../middleware/Authentication";
 import { getConnection } from "typeorm"
 import { Upvote } from "../entities/Upvote"
 
-@ObjectType()
-class PaginationPosts {
-    @Field(() => [Post])
-    posts: Post[]
-
-    @Field()
-    hasMore: boolean
-}
-
 @Resolver(Post)
 export class PostResolver {
 
     // * ALL POSTS
-    @Query(() => PaginationPosts)
-    async posts(
-        @Arg('limit', () => Int) limit: number,
-        @Arg('cursor', () => String, { nullable: true }) cursor: string | null,
-        @Ctx() { req }: Context
-    ): Promise<PaginationPosts> {
-        const realLimit = Math.min(50, limit) + 1
-        const realLimitPlusOne = realLimit + 1
-
-        const replacements: any[] = [realLimitPlusOne]
-
-        if (req.session.userId) {
-            replacements.push(req.session.userId)
-        }
-
-        let cursorIndex = 3
-        if (cursor) {
-            replacements.push(new Date(parseInt(cursor)))
-            cursorIndex = replacements.length
-        }
-
-        const posts = await getConnection().query(`
-            select p.*, 
-            json_build_object(
-                'id', u.id,
-                'username', u.username,
-                'email', u.email,
-                'createdAt', u."createdAt",
-                'updatedAt', u."updatedAt"
-                ) creator,
-            ${req.session.userId ?
-                '(select value from upvote where "userId" = $2 and "postId" = p.id) "voteStatus"'
-                : 'null as "voteStatus"'
-            }
-            from post p
-            inner join public.user u on u.id = p."creatorId"
-            ${cursor ? `where p."createdAt" < $${cursorIndex}` : ""}
-            order by p."createdAt" DESC
-            limit $1
-        `, replacements
-        )
-
-        return { posts: posts.slice(0, realLimit), hasMore: posts.length === realLimitPlusOne }
+    @Query(() => [Post])
+    async posts(): Promise<Post[]> {
+        return Post.find({ relations: ["creator", "group"]})
     }
 
     // * SINGLE POST
@@ -145,10 +96,10 @@ export class PostResolver {
         if (post.creatorId !== req.session.userId) {
             throw new Error("not authorized")
         }
-        
+
         const result = getConnection().createQueryBuilder().update(Post).set({ title, text })
-        .where('id = :id and "creatorId" = :creatorId', { id, creatorId: req.session.userId }).returning("*").execute()
-        
+            .where('id = :id and "creatorId" = :creatorId', { id, creatorId: req.session.userId }).returning("*").execute()
+
         return (await result).raw[0]
     }
 
@@ -169,7 +120,7 @@ export class PostResolver {
 
         await Upvote.delete({ postId: id })
         await Post.delete({ id })
-        
+
         return true
     }
 

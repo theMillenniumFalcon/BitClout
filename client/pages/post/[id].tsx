@@ -3,7 +3,7 @@ import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../../utils/createUrqlClient'
 import { useRouter } from 'next/router'
 import { usePostQuery, useUserLoggedInQuery } from '../../generated/graphql'
-import { Box, Button, Heading, Text, Link } from '@chakra-ui/react'
+import { Box, Button, Heading, Text, Link, Badge } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import NavBar from "../../components/NavBar"
 import NoPage from '../../components/NoPage'
@@ -54,8 +54,15 @@ const Post: React.FC<{}> = ({ }) => {
                 <Box p={5} shadow="md" borderWidth="1px">
                     <Box width="100%" display="flex" alignItems="center" justifyContent="space-between" mb={3}>
                         <Box display="flex" alignItems="center" justifyContent="space-between">
-                            <Upvote post={data.post} />
-                            <Heading as='h3' size='lg' mb={4}>{data.post.title}</Heading>
+                            <Box>
+                                <Upvote post={data.post} />
+                            </Box>
+                            <Box display="flex" alignItems="center" justifyContent="space-between">
+                                <Heading as='h3' size='lg' mb={4} mr={3}>{data.post.title}</Heading>
+                                <Badge colorScheme='red'>
+                                    {data.post.group.name}
+                                </Badge>
+                            </Box>
                         </Box>
                         {userLoggedInData?.userLoggedIn?.id !== data.post.creator.id ? null : (
                             <NextLink href={`/post/edit/${encodeURIComponent(data.post.id)}`}>

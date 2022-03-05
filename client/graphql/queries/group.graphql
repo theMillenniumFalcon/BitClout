@@ -7,5 +7,10 @@ query Group($id: Int!) {
         description
         membersNumber
         creatorId
+        posts {
+            id
+            title
+            text
+        }
     }
 }

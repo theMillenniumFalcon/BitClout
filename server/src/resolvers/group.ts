@@ -49,7 +49,7 @@ export class GroupResolver {
     // * SINGLE GROUP
     @Query(() => Group, { nullable: true })
     group(@Arg("id", () => Int) id: number): Promise<Group | undefined> {
-        return Group.findOne(id)
+        return Group.findOne(id, { relations: ["posts"]})
     }
 
     // * CREATE GROUP

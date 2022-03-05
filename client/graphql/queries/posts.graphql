@@ -1,7 +1,5 @@
-query Posts($limit: Int!, $cursor: String) {
-  posts(limit: $limit, cursor: $cursor) {
-    hasMore
-    posts {
+query Posts {
+  posts {
       id
       createdAt
       updatedAt
@@ -17,6 +15,5 @@ query Posts($limit: Int!, $cursor: String) {
         name
         description
       }
-    }
   }
 }

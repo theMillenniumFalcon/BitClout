@@ -29,6 +29,7 @@ export type Group = {
   id: Scalars['Float'];
   membersNumber: Scalars['Float'];
   name: Scalars['String'];
+  posts: Array<Post>;
   updatedAt: Scalars['String'];
 };
 
@@ -126,12 +127,6 @@ export type MutationVoteArgs = {
   value: Scalars['Int'];
 };
 
-export type PaginationPosts = {
-  __typename?: 'PaginationPosts';
-  hasMore: Scalars['Boolean'];
-  posts: Array<Post>;
-};
-
 export type Post = {
   __typename?: 'Post';
   createdAt: Scalars['String'];
@@ -164,7 +159,7 @@ export type Query = {
   group?: Maybe<Group>;
   groups?: Maybe<Array<Group>>;
   post?: Maybe<Post>;
-  posts: PaginationPosts;
+  posts: Array<Post>;
   test: Scalars['String'];
   userLoggedIn?: Maybe<User>;
 };
@@ -177,12 +172,6 @@ export type QueryGroupArgs = {
 
 export type QueryPostArgs = {
   id: Scalars['Int'];
-};
-
-
-export type QueryPostsArgs = {
-  cursor?: InputMaybe<Scalars['String']>;
-  limit: Scalars['Int'];
 };
 
 export type User = {
@@ -309,7 +298,7 @@ export type GroupQueryVariables = Exact<{
 }>;
 
 
-export type GroupQuery = { __typename?: 'Query', group?: { __typename?: 'Group', id: number, createdAt: string, updatedAt: string, name: string, description: string, membersNumber: number, creatorId: number } | null | undefined };
+export type GroupQuery = { __typename?: 'Query', group?: { __typename?: 'Group', id: number, createdAt: string, updatedAt: string, name: string, description: string, membersNumber: number, creatorId: number, posts: Array<{ __typename?: 'Post', id: number, title: string, text: string }> } | null | undefined };
 
 export type GroupsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -323,13 +312,10 @@ export type PostQueryVariables = Exact<{
 
 export type PostQuery = { __typename?: 'Query', post?: { __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, points: number, text: string, voteStatus?: number | null | undefined, creator: { __typename?: 'User', id: number, username: string }, group: { __typename?: 'Group', id: number, name: string, description: string } } | null | undefined };
 
-export type PostsQueryVariables = Exact<{
-  limit: Scalars['Int'];
-  cursor?: InputMaybe<Scalars['String']>;
-}>;
+export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginationPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, points: number, voteStatus?: number | null | undefined, creator: { __typename?: 'User', id: number, username: string }, group: { __typename?: 'Group', id: number, name: string, description: string } }> } };
+export type PostsQuery = { __typename?: 'Query', posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, points: number, voteStatus?: number | null | undefined, creator: { __typename?: 'User', id: number, username: string }, group: { __typename?: 'Group', id: number, name: string, description: string } }> };
 
 export type UserLoggedInQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -506,6 +492,11 @@ export const GroupDocument = gql`
     description
     membersNumber
     creatorId
+    posts {
+      id
+      title
+      text
+    }
   }
 }
     `;
@@ -555,31 +546,28 @@ export function usePostQuery(options: Omit<Urql.UseQueryArgs<PostQueryVariables>
   return Urql.useQuery<PostQuery>({ query: PostDocument, ...options });
 };
 export const PostsDocument = gql`
-    query Posts($limit: Int!, $cursor: String) {
-  posts(limit: $limit, cursor: $cursor) {
-    hasMore
-    posts {
+    query Posts {
+  posts {
+    id
+    createdAt
+    updatedAt
+    title
+    points
+    voteStatus
+    creator {
       id
-      createdAt
-      updatedAt
-      title
-      points
-      voteStatus
-      creator {
-        id
-        username
-      }
-      group {
-        id
-        name
-        description
-      }
+      username
+    }
+    group {
+      id
+      name
+      description
     }
   }
 }
     `;
 
-export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'>) {
+export function usePostsQuery(options?: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'>) {
   return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options });
 };
 export const UserLoggedInDocument = gql`
