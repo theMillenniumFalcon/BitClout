@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { PostsQuery, useVoteMutation } from '../generated/graphql'
 
 interface UpvoteProps {
-    post: PostsQuery['posts']['posts'][0]
+    post: PostsQuery['posts'][0]
 }
 
 const Upvote: React.FC<UpvoteProps> = ({ post }) => {

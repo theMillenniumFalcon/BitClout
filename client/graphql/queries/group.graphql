@@ -12,5 +12,9 @@ query Group($id: Int!) {
             title
             text
         }
+        members {
+            userId
+            groupId
+        }
     }
 }

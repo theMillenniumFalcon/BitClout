@@ -30,6 +30,7 @@ export class Group extends BaseEntity {
   @OneToMany(() => Post, post => post.group)
   posts: Post[];
 
+  @Field(() => [Member])
   @OneToMany(() => Member, member => member.group)
   members: Member[];
 

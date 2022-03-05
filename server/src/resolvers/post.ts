@@ -13,7 +13,7 @@ export class PostResolver {
     // * ALL POSTS
     @Query(() => [Post])
     async posts(): Promise<Post[]> {
-        return Post.find({ relations: ["creator", "group"]})
+        return Post.find({ relations: ["creator", "group"] })
     }
 
     // * SINGLE POST
@@ -47,15 +47,6 @@ export class PostResolver {
             }
         }
 
-        if (!options.groupId) {
-            return {
-                errors: [{
-                    field: 'groupId',
-                    message: "Please provide a group name",
-                }]
-            }
-        }
-
         let post
         try {
             const result = await getConnection().createQueryBuilder().insert().into(Post).values({
@@ -66,12 +57,11 @@ export class PostResolver {
             }).returning('*').execute()
             post = result.raw[0]
         } catch (err) {
-            // * no group error
-            if (err.code === 23503) {
+            if (options.groupId === 0) {
                 return {
                     errors: [{
                         field: 'groupId',
-                        message: "No group has this name"
+                        message: "Please select a group",
                     }]
                 }
             }

@@ -55,11 +55,9 @@ const EditPost: React.FC<{}> = ({ }) => {
                 }}>
                     {({ isSubmitting }) => (
                         <Form>
-                            <Text mb='7px' fontSize='md'>Title</Text>
-                            <InputForm name="title" placeholder="title" label="" />
+                            <InputForm name="title" placeholder="title" label="Title" />
                             <Box mt={4}>
-                            <Text mb='7px' fontSize='md'>Body</Text>
-                                <Textarea name="text" placeholder="text..." />
+                                <InputForm textarea name="text" placeholder="text..." label="Body" />
                             </Box>
                             <Button mt={4} type='submit' colorScheme='red' isLoading={isSubmitting}>Edit Post</Button>
                         </Form>

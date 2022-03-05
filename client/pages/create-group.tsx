@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../utils/createUrqlClient'
-import { Box, Button, Text } from '@chakra-ui/react'
+import { Box, Button } from '@chakra-ui/react'
 import { Formik, Form } from 'formik'
 import InputForm from '../components/InputForm'
 import { useCreateGroupMutation, useUserLoggedInQuery } from '../generated/graphql'
@@ -39,11 +39,9 @@ const CreateGroup: React.FC<{}> = ({ }) => {
                 }}>
                     {({ isSubmitting }) => (
                         <Form>
-                            <Text mb='7px' fontSize='md'>Name</Text>
-                            <InputForm name="name" placeholder="name" label="" />
+                            <InputForm name="name" placeholder="name" label="Name" />
                             <Box mt={4}>
-                                <Text mb='7px' fontSize='md'>Description</Text>
-                                <InputForm name="description" placeholder="description" label="" />
+                                <InputForm name="description" placeholder="description" label="Description" />
                             </Box>
                             <Button mt={4} type='submit' colorScheme='red' isLoading={isSubmitting}>Create Group</Button>
                         </Form>

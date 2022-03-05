@@ -6,6 +6,8 @@ import { Group } from "../entities/Group"
 import { Authentication } from "../middleware/Authentication";
 import { getConnection } from "typeorm"
 import { Member } from "../entities/Member"
+import { Post } from "../entities/Post"
+import { Upvote } from "../entities/Upvote"
 
 @Resolver(Group)
 export class GroupResolver {
@@ -17,24 +19,13 @@ export class GroupResolver {
         @Arg('members', () => Int) members: number,
         @Ctx() { req }: Context
     ) {
+        const isMembers = members > 0
+        const realMembers = isMembers ? members : 1
         const { userId } = req.session
 
-        await Member.insert({ userId, groupId, members })
+        await Member.insert({ userId, groupId, members: realMembers })
 
-        await Group.update({ id: groupId }, { membersNumber: members + 1 })
-
-        // await getConnection().query(`
-        //     START TRANSACTION;
-
-        //     insert into member ("userId", "groupId", members)
-        //     values(${userId}, ${groupId}, ${realMember});
-
-        //     update group
-        //     set membersNumber = membersNumber + ${realMember}
-        //     where id = ${groupId};
-
-        //     COMMIT;
-        // `)
+        await Group.update({ id: groupId }, { membersNumber: members + members })
 
         return true
     }
@@ -43,13 +34,13 @@ export class GroupResolver {
     @Query(() => [Group], { nullable: true })
     async groups(): Promise<Group[]> {
         // await delay(3000)
-        return Group.find()
+        return Group.find({ relations: ["posts", "members"]})
     }
 
     // * SINGLE GROUP
     @Query(() => Group, { nullable: true })
     group(@Arg("id", () => Int) id: number): Promise<Group | undefined> {
-        return Group.findOne(id, { relations: ["posts"]})
+        return Group.findOne(id, { relations: ["posts", "members"]})
     }
 
     // * CREATE GROUP
@@ -123,7 +114,9 @@ export class GroupResolver {
             throw new Error("not authorized")
         }
 
+        await Upvote.delete({ postId: id })
         await Member.delete({ groupId: id })
+        await Post.delete({ groupId: id })
         await Group.delete({ id })
         
         return true

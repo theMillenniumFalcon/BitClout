@@ -73,7 +73,8 @@ const Group: React.FC<{}> = ({ }) => {
                                     </Text>
                                 </Badge>
                             </Box>
-                            <Box mr={4}>
+                            <Box>
+                            {userLoggedInData?.userLoggedIn?.id === data?.group.creatorId ? null : (
                                 <Button
                                     size='md'
                                     height='45px'
@@ -81,6 +82,7 @@ const Group: React.FC<{}> = ({ }) => {
                                     border='2px'
                                     colorScheme='red'
                                     variant='solid'
+                                    mr={4}
                                     onClick={() => {
                                         member({
                                             groupId: (data?.group?.id) as number,
@@ -90,6 +92,7 @@ const Group: React.FC<{}> = ({ }) => {
                                 >
                                     Join Group
                                 </Button>
+                            )}
                             </Box>
                             <Box>
                                 {userLoggedInData?.userLoggedIn?.id !== data?.group.creatorId ? null : (

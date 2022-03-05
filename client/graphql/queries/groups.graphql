@@ -5,5 +5,14 @@ query Groups {
     description
     membersNumber
     creatorId
+    posts {
+      id
+      title
+      text
+    }
+    members {
+      userId
+      groupId
+    }
   }
 }

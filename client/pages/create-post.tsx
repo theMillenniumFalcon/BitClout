@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../utils/createUrqlClient'
-import { Box, Button, Select, Text } from '@chakra-ui/react'
+import { Box, Button, Text, Select } from '@chakra-ui/react'
 import { Formik, Form } from 'formik'
 import InputForm from '../components/InputForm'
 import { Textarea } from '@chakra-ui/react'
@@ -37,20 +37,21 @@ const CreatePost: React.FC<{}> = ({ }) => {
                     } else if (response.data?.createPost.post) {
                         router.push('/')
                     }
+                    console.log(values)
                 }}>
                     {({ isSubmitting }) => (
                         <Box>
                             <Form>
-                                <Select placeholder='Select a group' variant='filled' width="200px" mb={3}>
+                                <InputForm select name="groupId" placeholder='Select a group' width="200px" label="Select a group">
                                     {groupsData?.groups?.map((group) => !group ? null : (
-                                        <option value={group?.id}>{group?.name}</option>
+                                        <option key={group?.id} value={group?.id}>{group?.name}</option>
                                     ))}
-                                </Select>
-                                <Text mb='7px' fontSize='md'>Title</Text>
-                                <InputForm name="title" placeholder="title" label="" />
+                                </InputForm>
                                 <Box mt={4}>
-                                    <Text mb='7px' fontSize='md'>Body</Text>
-                                    <Textarea name="text" placeholder="text..." />
+                                    <InputForm name="title" placeholder="title" label="Title" />
+                                </Box>
+                                <Box mt={4}>
+                                    <InputForm textarea name="text" placeholder="text..." label="Body" />
                                 </Box>
                                 <Button mt={4} type='submit' colorScheme='red' isLoading={isSubmitting}>Create Post</Button>
                             </Form>

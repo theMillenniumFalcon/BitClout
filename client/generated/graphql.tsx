@@ -27,6 +27,7 @@ export type Group = {
   creatorId: Scalars['Float'];
   description: Scalars['String'];
   id: Scalars['Float'];
+  members: Array<Member>;
   membersNumber: Scalars['Float'];
   name: Scalars['String'];
   posts: Array<Post>;
@@ -42,6 +43,15 @@ export type GroupResponse = {
   __typename?: 'GroupResponse';
   errors?: Maybe<Array<FieldError>>;
   group?: Maybe<Group>;
+};
+
+export type Member = {
+  __typename?: 'Member';
+  group: Group;
+  groupId: Scalars['Float'];
+  members: Scalars['Float'];
+  user: User;
+  userId: Scalars['Float'];
 };
 
 export type Mutation = {
@@ -298,12 +308,12 @@ export type GroupQueryVariables = Exact<{
 }>;
 
 
-export type GroupQuery = { __typename?: 'Query', group?: { __typename?: 'Group', id: number, createdAt: string, updatedAt: string, name: string, description: string, membersNumber: number, creatorId: number, posts: Array<{ __typename?: 'Post', id: number, title: string, text: string }> } | null | undefined };
+export type GroupQuery = { __typename?: 'Query', group?: { __typename?: 'Group', id: number, createdAt: string, updatedAt: string, name: string, description: string, membersNumber: number, creatorId: number, posts: Array<{ __typename?: 'Post', id: number, title: string, text: string }>, members: Array<{ __typename?: 'Member', userId: number, groupId: number }> } | null | undefined };
 
 export type GroupsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GroupsQuery = { __typename?: 'Query', groups?: Array<{ __typename?: 'Group', id: number, name: string, description: string, membersNumber: number, creatorId: number }> | null | undefined };
+export type GroupsQuery = { __typename?: 'Query', groups?: Array<{ __typename?: 'Group', id: number, name: string, description: string, membersNumber: number, creatorId: number, posts: Array<{ __typename?: 'Post', id: number, title: string, text: string }>, members: Array<{ __typename?: 'Member', userId: number, groupId: number }> }> | null | undefined };
 
 export type PostQueryVariables = Exact<{
   id: Scalars['Int'];
@@ -497,6 +507,10 @@ export const GroupDocument = gql`
       title
       text
     }
+    members {
+      userId
+      groupId
+    }
   }
 }
     `;
@@ -512,6 +526,15 @@ export const GroupsDocument = gql`
     description
     membersNumber
     creatorId
+    posts {
+      id
+      title
+      text
+    }
+    members {
+      userId
+      groupId
+    }
   }
 }
     `;

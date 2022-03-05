@@ -90,9 +90,7 @@ const Home = () => {
             </Box>
           </Box>
         </Box>
-        <Box w="40%" mx="50px" p={5} zIndex={1} position="sticky"
-          style={{ position: "-webkit-sticky", top: "70px" }}
-        >
+        <Box w="40%" mx="50px" p={5}>
           <Heading as='h3' size='lg' mt={2} mb={4}>Available Groups:</Heading>
           <Box>
             {groupsFetching && !groupsData ? (
