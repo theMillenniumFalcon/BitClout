@@ -120,8 +120,9 @@ export type MutationResetPasswordArgs = {
 
 
 export type MutationUpdateGroupArgs = {
-  id: Scalars['Float'];
-  name?: InputMaybe<Scalars['String']>;
+  description: Scalars['String'];
+  id: Scalars['Int'];
+  name: Scalars['String'];
 };
 
 
@@ -285,6 +286,15 @@ export type ResetPasswordMutationVariables = Exact<{
 
 
 export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, user?: { __typename?: 'User', id: number, username: string } | null | undefined } };
+
+export type UpdateGroupMutationVariables = Exact<{
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+}>;
+
+
+export type UpdateGroupMutation = { __typename?: 'Mutation', updateGroup?: { __typename?: 'Group', id: number, name: string, description: string } | null | undefined };
 
 export type UpdatePostMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -469,6 +479,19 @@ export const ResetPasswordDocument = gql`
 
 export function useResetPasswordMutation() {
   return Urql.useMutation<ResetPasswordMutation, ResetPasswordMutationVariables>(ResetPasswordDocument);
+};
+export const UpdateGroupDocument = gql`
+    mutation UpdateGroup($id: Int!, $name: String!, $description: String!) {
+  updateGroup(id: $id, name: $name, description: $description) {
+    id
+    name
+    description
+  }
+}
+    `;
+
+export function useUpdateGroupMutation() {
+  return Urql.useMutation<UpdateGroupMutation, UpdateGroupMutationVariables>(UpdateGroupDocument);
 };
 export const UpdatePostDocument = gql`
     mutation UpdatePost($id: Int!, $title: String!, $text: String!) {

@@ -4,11 +4,9 @@ import { createUrqlClient } from '../../utils/createUrqlClient'
 import { useRouter } from 'next/router'
 import { useDeleteGroupMutation, useGroupQuery, useMemberMutation, useUserLoggedInQuery } from '../../generated/graphql'
 import { Box, Button, Heading, Text, IconButton, Badge, Stack, Flex } from '@chakra-ui/react'
-import { DeleteIcon } from '@chakra-ui/icons'
+import { DeleteIcon, EditIcon } from '@chakra-ui/icons'
 import NavBar from "../../components/NavBar"
 import NoPage from '../../components/NoPage'
-import Link from 'next/link'
-import Upvote from '../../components/Upvote'
 import NextLink from 'next/link'
 
 interface GroupProps { }
@@ -74,39 +72,52 @@ const Group: React.FC<{}> = ({ }) => {
                                 </Badge>
                             </Box>
                             <Box>
-                            {userLoggedInData?.userLoggedIn?.id === data?.group.creatorId ? null : (
-                                <Button
-                                    size='md'
-                                    height='45px'
-                                    width='120px'
-                                    border='2px'
-                                    colorScheme='red'
-                                    variant='solid'
-                                    mr={4}
-                                    onClick={() => {
-                                        member({
-                                            groupId: (data?.group?.id) as number,
-                                            members: 1
-                                        })
-                                    }}
-                                >
-                                    Join Group
-                                </Button>
-                            )}
+                                {userLoggedInData?.userLoggedIn?.id === data?.group.creatorId ? null : (
+                                    <Button
+                                        size='md'
+                                        height='45px'
+                                        width='120px'
+                                        border='2px'
+                                        colorScheme='red'
+                                        variant='solid'
+                                        mr={4}
+                                        onClick={() => {
+                                            member({
+                                                groupId: (data?.group?.id) as number,
+                                                members: 1
+                                            })
+                                        }}
+                                    >
+                                        Join Group
+                                    </Button>
+                                )}
                             </Box>
                             <Box>
                                 {userLoggedInData?.userLoggedIn?.id !== data?.group.creatorId ? null : (
-                                    <IconButton
-                                        colorScheme='red'
-                                        aria-label='Delete group'
-                                        size='lg'
-                                        height='45px'
-                                        icon={<DeleteIcon />}
-                                        onClick={() => {
-                                            deleteGroup({ id: (data?.group?.id) as any })
-                                            router.replace('/')
-                                        }}
-                                    />
+                                    <Box>
+                                        <NextLink href={`/group/edit/${encodeURIComponent(data.group.id)}`}>
+                                        <IconButton
+                                            colorScheme='red'
+                                            aria-label='Edit group'
+                                            size='lg'
+                                            height='45px'
+                                            mr={4}
+                                            icon={<EditIcon />}
+                                            onClick={() => { }}
+                                        />
+                                        </NextLink>
+                                        <IconButton
+                                            colorScheme='red'
+                                            aria-label='Delete group'
+                                            size='lg'
+                                            height='45px'
+                                            icon={<DeleteIcon />}
+                                            onClick={() => {
+                                                deleteGroup({ id: (data?.group?.id) as any })
+                                                router.replace('/')
+                                            }}
+                                        />
+                                    </Box>
                                 )}
                             </Box>
                         </Box>
