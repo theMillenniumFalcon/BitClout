@@ -3,7 +3,7 @@ query Groups {
     id
     name
     description
-    membersNumber
+    membersnumber
     creatorId
     posts {
       id

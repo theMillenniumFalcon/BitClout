@@ -91,7 +91,14 @@ const Home = () => {
           </Box>
         </Box>
         <Box w="40%" mx="50px" p={5}>
-          <Heading as='h3' size='lg' mt={2} mb={4}>Available Groups:</Heading>
+          <Box display="flex" alignItems="center" justifyContent="space-between">
+            <Heading as='h3' size='lg' mt={2} mb={4}>Available Groups:</Heading>
+            <NextLink href='/create-group'>
+              <Button size='md' height='45px' width='120px' border='2px' my={4} colorScheme='red' variant='solid'>
+                <Link style={{ textDecoration: "none" }}>Create Group</Link>
+              </Button>
+            </NextLink>
+          </Box>
           <Box>
             {groupsFetching && !groupsData ? (
               <div>Loading...</div>
@@ -114,9 +121,9 @@ const Home = () => {
                           </Box>
                           <Box>
                             <Badge variant='outline' colorScheme='red' mr={4}>
-                              <Text fontSize='sm'>{group?.membersNumber}</Text>
+                              <Text fontSize='sm'>{group?.membersnumber}</Text>
                               <Text fontSize='xs'>
-                                {group?.membersNumber !== 1 ? (
+                                {group?.membersnumber !== 1 ? (
                                   <div>members</div>
                                 ) : (
                                   <div>member</div>

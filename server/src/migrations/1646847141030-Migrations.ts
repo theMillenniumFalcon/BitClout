@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class Migrations1646492595374 implements MigrationInterface {
-    name = 'Migrations1646492595374'
+export class Migrations1646847141030 implements MigrationInterface {
+    name = 'Migrations1646847141030'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -13,21 +13,8 @@ export class Migrations1646492595374 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
-            CREATE TABLE "group" (
-                "id" SERIAL NOT NULL,
-                "name" character varying NOT NULL,
-                "description" character varying NOT NULL,
-                "creatorId" integer NOT NULL,
-                "membersNumber" integer NOT NULL DEFAULT '1',
-                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
-                CONSTRAINT "UQ_8a45300fd825918f3b40195fbdc" UNIQUE ("name"),
-                CONSTRAINT "PK_256aa0fda9b1de1a73ee0b7106b" PRIMARY KEY ("id")
-            )
-        `);
-        await queryRunner.query(`
             CREATE TABLE "member" (
-                "members" integer NOT NULL,
+                "value" integer NOT NULL,
                 "userId" integer NOT NULL,
                 "groupId" integer NOT NULL,
                 CONSTRAINT "PK_4e3e4366436e4b8753d6f0c5927" PRIMARY KEY ("userId", "groupId")
@@ -57,6 +44,19 @@ export class Migrations1646492595374 implements MigrationInterface {
                 "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
                 CONSTRAINT "PK_be5fda3aac270b134ff9c21cdee" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "group" (
+                "id" SERIAL NOT NULL,
+                "name" character varying NOT NULL,
+                "description" character varying NOT NULL,
+                "creatorId" integer NOT NULL,
+                "membersnumber" integer NOT NULL DEFAULT '1',
+                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
+                "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
+                CONSTRAINT "UQ_8a45300fd825918f3b40195fbdc" UNIQUE ("name"),
+                CONSTRAINT "PK_256aa0fda9b1de1a73ee0b7106b" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
@@ -105,6 +105,9 @@ export class Migrations1646492595374 implements MigrationInterface {
             ALTER TABLE "upvote" DROP CONSTRAINT "FK_3abd9f37a94f8db3c33bda4fdae"
         `);
         await queryRunner.query(`
+            DROP TABLE "group"
+        `);
+        await queryRunner.query(`
             DROP TABLE "post"
         `);
         await queryRunner.query(`
@@ -112,9 +115,6 @@ export class Migrations1646492595374 implements MigrationInterface {
         `);
         await queryRunner.query(`
             DROP TABLE "member"
-        `);
-        await queryRunner.query(`
-            DROP TABLE "group"
         `);
         await queryRunner.query(`
             DROP TABLE "upvote"

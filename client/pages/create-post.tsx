@@ -4,7 +4,6 @@ import { createUrqlClient } from '../utils/createUrqlClient'
 import { Box, Button, Text, Select } from '@chakra-ui/react'
 import { Formik, Form } from 'formik'
 import InputForm from '../components/InputForm'
-import { Textarea } from '@chakra-ui/react'
 import { useCreatePostMutation, useGroupsQuery, useUserLoggedInQuery } from '../generated/graphql'
 import { useRouter } from "next/router"
 import Errors from '../utils/Errors'

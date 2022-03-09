@@ -5,7 +5,7 @@ query Group($id: Int!) {
         updatedAt
         name
         description
-        membersNumber
+        membersnumber
         creatorId
         posts {
             id

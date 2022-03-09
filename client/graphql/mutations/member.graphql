@@ -1,3 +1,3 @@
-mutation Member($members: Int!, $groupId: Int!) {
-  member(members: $members, groupId: $groupId)
+mutation Member($value: Int!, $groupId: Int!) {
+  member(value: $value, groupId: $groupId)
 }

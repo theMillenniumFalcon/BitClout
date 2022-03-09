@@ -18,13 +18,17 @@ export class Group extends BaseEntity {
   @Column()
   description!: string;
 
+  // @Field()
+  // @Column({ type: "boolean", default: false })
+  // memberStatus: boolean;
+
   @Field()
   @Column()
   creatorId: number;
 
   @Field()
   @Column({ type: "int", default: 1 })
-  membersNumber!: number;
+  membersnumber!: number;
 
   @Field(() => [Post])
   @OneToMany(() => Post, post => post.group)

@@ -48,9 +48,9 @@ const ExploreGroups: React.FC<exploregroupsProps> = ({ }) => {
                                     </Box>
                                     <Box>
                                         <Badge variant='outline' colorScheme='red' mr={4}>
-                                            <Text fontSize='sm'>{group?.membersNumber}</Text>
+                                            <Text fontSize='sm'>{group?.membersnumber}</Text>
                                             <Text fontSize='xs'>
-                                                {group?.membersNumber !== 1 ? (
+                                                {group?.membersnumber !== 1 ? (
                                                     <div>members</div>
                                                 ) : (
                                                     <div>member</div>

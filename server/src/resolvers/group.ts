@@ -16,16 +16,14 @@ export class GroupResolver {
     @UseMiddleware(Authentication)
     async member(
         @Arg('groupId', () => Int) groupId: number,
-        @Arg('members', () => Int) members: number,
+        @Arg('value', () => Int) value: number,
         @Ctx() { req }: Context
     ) {
-        const isMembers = members > 0
-        const realMembers = isMembers ? members : 1
         const { userId } = req.session
 
-        await Member.insert({ userId, groupId, members: realMembers })
+        await Member.insert({ userId, groupId, value })
 
-        await Group.update({ id: groupId }, { membersNumber: members + members })
+        await Group.update({ id: groupId }, { membersnumber: value })
 
         return true
     }
@@ -33,7 +31,6 @@ export class GroupResolver {
     // * ALL GROUPS
     @Query(() => [Group], { nullable: true })
     async groups(): Promise<Group[]> {
-        // await delay(3000)
         return Group.find({ relations: ["posts", "members"]})
     }
 

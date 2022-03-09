@@ -23,6 +23,7 @@ const Group: React.FC<{}> = ({ }) => {
     const [{ data: userLoggedInData }] = useUserLoggedInQuery()
     const [, member] = useMemberMutation()
     const [, deleteGroup] = useDeleteGroupMutation()
+    const realValue = (data?.group?.membersnumber) as any + 1
 
     if (fetching) {
         return (
@@ -61,9 +62,9 @@ const Group: React.FC<{}> = ({ }) => {
                         <Box display="flex" alignItems="center" justifyContent="space-between">
                             <Box>
                                 <Badge variant='outline' colorScheme='red' mr={4}>
-                                    <Text fontSize='sm'>{data?.group?.membersNumber}</Text>
+                                    <Text fontSize='sm'>{data?.group?.membersnumber}</Text>
                                     <Text fontSize='xs'>
-                                        {data?.group?.membersNumber !== 1 ? (
+                                        {data?.group?.membersnumber !== 1 ? (
                                             <div>members</div>
                                         ) : (
                                             <div>member</div>
@@ -81,10 +82,10 @@ const Group: React.FC<{}> = ({ }) => {
                                         colorScheme='red'
                                         variant='solid'
                                         mr={4}
-                                        onClick={() => {
-                                            member({
+                                        onClick={async () => {
+                                            await member({
                                                 groupId: (data?.group?.id) as number,
-                                                members: 1
+                                                value: realValue
                                             })
                                         }}
                                     >
@@ -96,15 +97,14 @@ const Group: React.FC<{}> = ({ }) => {
                                 {userLoggedInData?.userLoggedIn?.id !== data?.group.creatorId ? null : (
                                     <Box>
                                         <NextLink href={`/group/edit/${encodeURIComponent(data.group.id)}`}>
-                                        <IconButton
-                                            colorScheme='red'
-                                            aria-label='Edit group'
-                                            size='lg'
-                                            height='45px'
-                                            mr={4}
-                                            icon={<EditIcon />}
-                                            onClick={() => { }}
-                                        />
+                                            <IconButton
+                                                colorScheme='red'
+                                                aria-label='Edit group'
+                                                size='lg'
+                                                height='45px'
+                                                mr={4}
+                                                icon={<EditIcon />}
+                                            />
                                         </NextLink>
                                         <IconButton
                                             colorScheme='red'

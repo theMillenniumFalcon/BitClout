@@ -28,7 +28,7 @@ export type Group = {
   description: Scalars['String'];
   id: Scalars['Float'];
   members: Array<Member>;
-  membersNumber: Scalars['Float'];
+  membersnumber: Scalars['Float'];
   name: Scalars['String'];
   posts: Array<Post>;
   updatedAt: Scalars['String'];
@@ -49,9 +49,9 @@ export type Member = {
   __typename?: 'Member';
   group: Group;
   groupId: Scalars['Float'];
-  members: Scalars['Float'];
   user: User;
   userId: Scalars['Float'];
+  value: Scalars['Float'];
 };
 
 export type Mutation = {
@@ -104,7 +104,7 @@ export type MutationLoginArgs = {
 
 export type MutationMemberArgs = {
   groupId: Scalars['Int'];
-  members: Scalars['Int'];
+  value: Scalars['Int'];
 };
 
 
@@ -263,7 +263,7 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 
 export type MemberMutationVariables = Exact<{
-  members: Scalars['Int'];
+  value: Scalars['Int'];
   groupId: Scalars['Int'];
 }>;
 
@@ -318,12 +318,12 @@ export type GroupQueryVariables = Exact<{
 }>;
 
 
-export type GroupQuery = { __typename?: 'Query', group?: { __typename?: 'Group', id: number, createdAt: string, updatedAt: string, name: string, description: string, membersNumber: number, creatorId: number, posts: Array<{ __typename?: 'Post', id: number, title: string, text: string }>, members: Array<{ __typename?: 'Member', userId: number, groupId: number }> } | null | undefined };
+export type GroupQuery = { __typename?: 'Query', group?: { __typename?: 'Group', id: number, createdAt: string, updatedAt: string, name: string, description: string, membersnumber: number, creatorId: number, posts: Array<{ __typename?: 'Post', id: number, title: string, text: string }>, members: Array<{ __typename?: 'Member', userId: number, groupId: number }> } | null | undefined };
 
 export type GroupsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GroupsQuery = { __typename?: 'Query', groups?: Array<{ __typename?: 'Group', id: number, name: string, description: string, membersNumber: number, creatorId: number, posts: Array<{ __typename?: 'Post', id: number, title: string, text: string }>, members: Array<{ __typename?: 'Member', userId: number, groupId: number }> }> | null | undefined };
+export type GroupsQuery = { __typename?: 'Query', groups?: Array<{ __typename?: 'Group', id: number, name: string, description: string, membersnumber: number, creatorId: number, posts: Array<{ __typename?: 'Post', id: number, title: string, text: string }>, members: Array<{ __typename?: 'Member', userId: number, groupId: number }> }> | null | undefined };
 
 export type PostQueryVariables = Exact<{
   id: Scalars['Int'];
@@ -436,8 +436,8 @@ export function useLogoutMutation() {
   return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
 };
 export const MemberDocument = gql`
-    mutation Member($members: Int!, $groupId: Int!) {
-  member(members: $members, groupId: $groupId)
+    mutation Member($value: Int!, $groupId: Int!) {
+  member(value: $value, groupId: $groupId)
 }
     `;
 
@@ -523,7 +523,7 @@ export const GroupDocument = gql`
     updatedAt
     name
     description
-    membersNumber
+    membersnumber
     creatorId
     posts {
       id
@@ -547,7 +547,7 @@ export const GroupsDocument = gql`
     id
     name
     description
-    membersNumber
+    membersnumber
     creatorId
     posts {
       id

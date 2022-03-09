@@ -58,7 +58,7 @@ const EditGroup: React.FC<{}> = ({ }) => {
                             <Box mt={4}>
                                 <InputForm name="description" placeholder="description" label="Description" />
                             </Box>
-                            <Button mt={4} type='submit' colorScheme='red' isLoading={isSubmitting}>Edit Post</Button>
+                            <Button mt={4} type='submit' colorScheme='red' isLoading={isSubmitting}>Edit Group</Button>
                         </Form>
                     )}
                 </Formik>

@@ -10,7 +10,7 @@ import { Group } from "./Group";
 export class Member extends BaseEntity {
   @Field()
   @Column({ type: "int" })
-  members: number;
+  value: number;
 
   @Field()
   @PrimaryColumn()
