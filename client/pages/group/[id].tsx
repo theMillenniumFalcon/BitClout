@@ -24,6 +24,8 @@ const Group: React.FC<{}> = ({ }) => {
     const [, member] = useMemberMutation()
     const [, deleteGroup] = useDeleteGroupMutation()
     const realValue = (data?.group?.membersnumber) as any + 1
+    const memberConversion = (data?.group?.members.map(({ userId }) => [userId])) as any
+    const userIdConversion = Array.prototype.concat.apply([], memberConversion)
 
     if (fetching) {
         return (
@@ -74,23 +76,41 @@ const Group: React.FC<{}> = ({ }) => {
                             </Box>
                             <Box>
                                 {userLoggedInData?.userLoggedIn?.id === data?.group.creatorId ? null : (
-                                    <Button
-                                        size='md'
-                                        height='45px'
-                                        width='120px'
-                                        border='2px'
-                                        colorScheme='red'
-                                        variant='solid'
-                                        mr={4}
-                                        onClick={async () => {
-                                            await member({
-                                                groupId: (data?.group?.id) as number,
-                                                value: realValue
-                                            })
-                                        }}
-                                    >
-                                        Join Group
-                                    </Button>
+                                    <Box>
+                                        {userIdConversion.includes(userLoggedInData?.userLoggedIn?.id) ? (
+                                            <Button
+                                                size='md'
+                                                height='45px'
+                                                width='120px'
+                                                border='2px'
+                                                color='red'
+                                                variant='solid'
+                                                mr={4}
+                                                cursor='no-drop'
+                                            >
+                                                Joined
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                size='md'
+                                                height='45px'
+                                                width='120px'
+                                                border='2px'
+                                                colorScheme='red'
+                                                variant='solid'
+                                                mr={4}
+                                                onClick={async () => {
+                                                    await member({
+                                                        groupId: (data?.group?.id) as number,
+                                                        value: realValue
+                                                    })
+                                                }}
+                                            >
+                                                Join Group
+                                            </Button>
+                                        )}
+
+                                    </Box>
                                 )}
                             </Box>
                             <Box>

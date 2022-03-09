@@ -318,12 +318,12 @@ export type GroupQueryVariables = Exact<{
 }>;
 
 
-export type GroupQuery = { __typename?: 'Query', group?: { __typename?: 'Group', id: number, createdAt: string, updatedAt: string, name: string, description: string, membersnumber: number, creatorId: number, posts: Array<{ __typename?: 'Post', id: number, title: string, text: string }>, members: Array<{ __typename?: 'Member', userId: number, groupId: number }> } | null | undefined };
+export type GroupQuery = { __typename?: 'Query', group?: { __typename?: 'Group', id: number, createdAt: string, updatedAt: string, name: string, description: string, membersnumber: number, creatorId: number, posts: Array<{ __typename?: 'Post', id: number, title: string, text: string }>, members: Array<{ __typename?: 'Member', userId: number }> } | null | undefined };
 
 export type GroupsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GroupsQuery = { __typename?: 'Query', groups?: Array<{ __typename?: 'Group', id: number, name: string, description: string, membersnumber: number, creatorId: number, posts: Array<{ __typename?: 'Post', id: number, title: string, text: string }>, members: Array<{ __typename?: 'Member', userId: number, groupId: number }> }> | null | undefined };
+export type GroupsQuery = { __typename?: 'Query', groups?: Array<{ __typename?: 'Group', id: number, name: string, description: string, membersnumber: number, creatorId: number, posts: Array<{ __typename?: 'Post', id: number, title: string, text: string }>, members: Array<{ __typename?: 'Member', userId: number }> }> | null | undefined };
 
 export type PostQueryVariables = Exact<{
   id: Scalars['Int'];
@@ -532,7 +532,6 @@ export const GroupDocument = gql`
     }
     members {
       userId
-      groupId
     }
   }
 }
@@ -556,7 +555,6 @@ export const GroupsDocument = gql`
     }
     members {
       userId
-      groupId
     }
   }
 }

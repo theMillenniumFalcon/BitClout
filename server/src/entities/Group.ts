@@ -18,10 +18,6 @@ export class Group extends BaseEntity {
   @Column()
   description!: string;
 
-  // @Field()
-  // @Column({ type: "boolean", default: false })
-  // memberStatus: boolean;
-
   @Field()
   @Column()
   creatorId: number;

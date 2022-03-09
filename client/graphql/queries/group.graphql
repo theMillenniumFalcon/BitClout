@@ -14,7 +14,6 @@ query Group($id: Int!) {
         }
         members {
             userId
-            groupId
         }
     }
 }
