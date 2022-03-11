@@ -154,7 +154,7 @@ export type Post = {
 };
 
 export type PostInput = {
-  groupId: Scalars['Int'];
+  groupId: Scalars['String'];
   text: Scalars['String'];
   title: Scalars['String'];
 };
@@ -222,7 +222,7 @@ export type CreateGroupMutation = { __typename?: 'Mutation', createGroup: { __ty
 export type CreatePostMutationVariables = Exact<{
   title: Scalars['String'];
   text: Scalars['String'];
-  groupId: Scalars['Int'];
+  groupId: Scalars['String'];
 }>;
 
 
@@ -363,7 +363,7 @@ export function useCreateGroupMutation() {
   return Urql.useMutation<CreateGroupMutation, CreateGroupMutationVariables>(CreateGroupDocument);
 };
 export const CreatePostDocument = gql`
-    mutation CreatePost($title: String!, $text: String!, $groupId: Int!) {
+    mutation CreatePost($title: String!, $text: String!, $groupId: String!) {
   createPost(options: {title: $title, text: $text, groupId: $groupId}) {
     errors {
       field

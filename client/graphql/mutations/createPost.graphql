@@ -1,4 +1,4 @@
-mutation CreatePost($title: String!, $text: String!, $groupId: Int!) {
+mutation CreatePost($title: String!, $text: String!, $groupId: String!) {
     createPost(
       options: { title: $title, text: $text, groupId: $groupId }
     ) {

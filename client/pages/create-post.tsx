@@ -26,7 +26,7 @@ const CreatePost: React.FC<{}> = ({ }) => {
             bgGradient='linear(to-b, rgba(0, 0, 0, 0) 0%, rgba(90, 0, 0, 1) 100%)'
         >
             <Box w="700px" mx="auto" bg="white" p={7} borderRadius='20px'>
-                <Formik initialValues={{ title: '', text: '', groupId: 0 }} onSubmit={async (values, { setErrors }) => {
+                <Formik initialValues={{ title: '', text: '', groupId: '0' }} onSubmit={async (values, { setErrors }) => {
                     const response = await createPost(values)
                     const { error } = response
                     if (response.data?.createPost.errors) {
@@ -36,7 +36,6 @@ const CreatePost: React.FC<{}> = ({ }) => {
                     } else if (response.data?.createPost.post) {
                         router.push('/')
                     }
-                    console.log(values)
                 }}>
                     {({ isSubmitting }) => (
                         <Box>

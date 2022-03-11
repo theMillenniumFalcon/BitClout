@@ -47,9 +47,9 @@ export class VoteResolver {
                     set points = points + $1
                     where id = $2;
                 `, [realValue, postId])
-            
+
             })
-        } 
+        }
 
         return true
     }

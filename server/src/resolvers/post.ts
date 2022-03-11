@@ -48,16 +48,17 @@ export class PostResolver {
         }
 
         let post
+        const _groupId = parseInt(options.groupId)
         try {
             const result = await getConnection().createQueryBuilder().insert().into(Post).values({
                 title: options.title,
                 text: options.text,
                 creatorId: req.session.userId,
-                groupId: options.groupId
+                groupId: _groupId
             }).returning('*').execute()
             post = result.raw[0]
         } catch (err) {
-            if (options.groupId === 0) {
+            if (options.groupId === '0') {
                 return {
                     errors: [{
                         field: 'groupId',
