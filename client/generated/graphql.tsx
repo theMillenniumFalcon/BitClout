@@ -58,7 +58,6 @@ export type Mutation = {
   __typename?: 'Mutation';
   createGroup: GroupResponse;
   createPost: PostResponse;
-  deleteGroup: Scalars['Boolean'];
   deletePost: Scalars['Boolean'];
   forgotPassword: Scalars['Boolean'];
   login: UserResponse;
@@ -79,11 +78,6 @@ export type MutationCreateGroupArgs = {
 
 export type MutationCreatePostArgs = {
   options: PostInput;
-};
-
-
-export type MutationDeleteGroupArgs = {
-  id: Scalars['Int'];
 };
 
 
@@ -227,13 +221,6 @@ export type CreatePostMutationVariables = Exact<{
 
 
 export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'PostResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, post?: { __typename?: 'Post', id: number, title: string, text: string } | null | undefined } };
-
-export type DeleteGroupMutationVariables = Exact<{
-  id: Scalars['Int'];
-}>;
-
-
-export type DeleteGroupMutation = { __typename?: 'Mutation', deleteGroup: boolean };
 
 export type DeletePostMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -380,15 +367,6 @@ export const CreatePostDocument = gql`
 
 export function useCreatePostMutation() {
   return Urql.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument);
-};
-export const DeleteGroupDocument = gql`
-    mutation DeleteGroup($id: Int!) {
-  deleteGroup(id: $id)
-}
-    `;
-
-export function useDeleteGroupMutation() {
-  return Urql.useMutation<DeleteGroupMutation, DeleteGroupMutationVariables>(DeleteGroupDocument);
 };
 export const DeletePostDocument = gql`
     mutation DeletePost($id: Int!) {

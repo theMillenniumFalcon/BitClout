@@ -6,8 +6,6 @@ import { Group } from "../entities/Group"
 import { Authentication } from "../middleware/Authentication";
 import { getConnection } from "typeorm"
 import { Member } from "../entities/Member"
-import { Post } from "../entities/Post"
-import { Upvote } from "../entities/Upvote"
 
 @Resolver(Group)
 export class GroupResolver {
@@ -100,29 +98,6 @@ export class GroupResolver {
             .where('id = :id and "creatorId" = :creatorId', { id, creatorId: req.session.userId }).returning("*").execute()
 
         return (await result).raw[0]
-    }
-
-    // * DELETE GROUP
-    @Mutation(() => Boolean)
-    @UseMiddleware(Authentication)
-    async deleteGroup(
-        @Arg('id', () => Int) id: number,
-        @Ctx() { req }: Context
-    ): Promise<boolean> {
-        const group = await Group.findOne(id)
-        if (!group) {
-            return false
-        }
-        if (group.creatorId !== req.session.userId) {
-            throw new Error("not authorized")
-        }
-
-        await Upvote.delete({ postId: id })
-        await Member.delete({ groupId: id })
-        await Post.delete({ groupId: id })
-        await Group.delete({ id })
-        
-        return true
     }
 
 }

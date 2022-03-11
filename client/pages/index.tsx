@@ -82,12 +82,6 @@ const Home = () => {
                 ))}
               </Stack>
             )}
-            <Box display="flex" h="50px" alignItems="center" justifyContent="center">
-              Made with ❤️ by
-              <Link href="https://github.com/theMillenniumFalcon" target="_blank" style={{ textDecoration: "none" }}>
-                <pre> Nishank</pre>
-              </Link>
-            </Box>
           </Box>
         </Box>
         <Box w="40%" mx="50px" p={5}>
@@ -147,6 +141,12 @@ const Home = () => {
             )}
           </Box>
         </Box>
+      </Box>
+      <Box display="flex" h="50px" alignItems="center" justifyContent="center">
+        Made with ❤️ by
+        <Link href="https://github.com/theMillenniumFalcon" target="_blank" style={{ textDecoration: "none" }}>
+          <pre> Nishank</pre>
+        </Link>
       </Box>
     </>
   )

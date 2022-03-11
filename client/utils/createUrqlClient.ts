@@ -1,5 +1,5 @@
 import { dedupExchange, fetchExchange, stringifyVariables } from "urql"
-import { LoginMutation, LogoutMutation, RegisterMutation, UserLoggedInDocument, UserLoggedInQuery } from "../generated/graphql"
+import { LoginMutation, LogoutMutation, MemberMutationVariables, RegisterMutation, UserLoggedInDocument, UserLoggedInQuery } from "../generated/graphql"
 import { betterUpdateQuery } from "./betterUpdateQuery"
 import { cacheExchange } from "@urql/exchange-graphcache"
 import { gql } from '@urql/core';
@@ -85,7 +85,27 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
               }
             },
             member: (_result, args, cache, info) => {
-              
+              const { groupId, value } = args as MemberMutationVariables
+              const data = cache.readFragment(
+                gql`
+                  fragment _ on Group {
+                    id
+                    membersnumber
+                  }
+                `,
+                { id: groupId }
+              )
+              if (data) {
+                const newMembers = (data.membersnumber as number) + value
+                cache.writeFragment(
+                  gql`
+                    fragment __ on Group {
+                      membersnumber
+                    }
+                  `,
+                  { id: groupId, membersnumber: newMembers }
+                )
+              }
             },
             createPost: (_result, args, cache, info) => {
               const allFields = cache.inspectFields("Query")

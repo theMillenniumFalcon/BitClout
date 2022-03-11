@@ -2,9 +2,9 @@ import React from 'react'
 import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../../utils/createUrqlClient'
 import { useRouter } from 'next/router'
-import { useDeleteGroupMutation, useGroupQuery, useMemberMutation, useUserLoggedInQuery } from '../../generated/graphql'
+import { useGroupQuery, useMemberMutation, useUserLoggedInQuery } from '../../generated/graphql'
 import { Box, Button, Heading, Text, IconButton, Badge, Stack, Flex } from '@chakra-ui/react'
-import { DeleteIcon, EditIcon } from '@chakra-ui/icons'
+import {  EditIcon } from '@chakra-ui/icons'
 import NavBar from "../../components/NavBar"
 import NoPage from '../../components/NoPage'
 import NextLink from 'next/link'
@@ -22,7 +22,6 @@ const Group: React.FC<{}> = ({ }) => {
     })
     const [{ data: userLoggedInData }] = useUserLoggedInQuery()
     const [, member] = useMemberMutation()
-    const [, deleteGroup] = useDeleteGroupMutation()
     const realValue = (data?.group?.membersnumber) as any + 1
     const memberConversion = (data?.group?.members.map(({ userId }) => [userId])) as any
     const userIdConversion = Array.prototype.concat.apply([], memberConversion)
@@ -126,17 +125,6 @@ const Group: React.FC<{}> = ({ }) => {
                                                 icon={<EditIcon />}
                                             />
                                         </NextLink>
-                                        <IconButton
-                                            colorScheme='red'
-                                            aria-label='Delete group'
-                                            size='lg'
-                                            height='45px'
-                                            icon={<DeleteIcon />}
-                                            onClick={() => {
-                                                deleteGroup({ id: (data?.group?.id) as any })
-                                                router.replace('/')
-                                            }}
-                                        />
                                     </Box>
                                 )}
                             </Box>
