@@ -64,7 +64,7 @@ export class GroupResolver {
             group = result.raw[0]
         } catch (err) {
             // * duplicate group name error
-            if (err.code === process.env.DUPLICATE_ERROR_CODE) {
+            if (err.code === 23505) {
                 return {
                     errors: [{
                         field: 'name',

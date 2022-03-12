@@ -1,5 +1,4 @@
 import "reflect-metadata"
-require('dotenv').config()
 import express from 'express'
 import { ApolloServer } from 'apollo-server-express'
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core"
@@ -22,7 +21,7 @@ import { Group } from "./entities/Group"
 import { GroupResolver } from "./resolvers/group"
 import { Member } from "./entities/Member"
 
-const PORT = process.env.PORT || 4000
+const PORT = 4000
 
 const main = async () => {
 

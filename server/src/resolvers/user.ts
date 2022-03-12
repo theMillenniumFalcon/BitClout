@@ -91,7 +91,7 @@ export class UserResolver {
                 }
             }
             // * duplicate username error
-            if (err.code === process.env.DUPLICATE_ERROR_CODE) {
+            if (err.code === 23505) {
                 return {
                     errors: [{
                         field: 'username',

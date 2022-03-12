@@ -4,7 +4,7 @@ import { createUrqlClient } from '../../utils/createUrqlClient'
 import { useRouter } from 'next/router'
 import { useGroupQuery, useMemberMutation, useUserLoggedInQuery } from '../../generated/graphql'
 import { Box, Button, Heading, Text, IconButton, Badge, Stack, Flex } from '@chakra-ui/react'
-import {  EditIcon } from '@chakra-ui/icons'
+import { EditIcon } from '@chakra-ui/icons'
 import NavBar from "../../components/NavBar"
 import NoPage from '../../components/NoPage'
 import NextLink from 'next/link'
@@ -74,43 +74,49 @@ const Group: React.FC<{}> = ({ }) => {
                                 </Badge>
                             </Box>
                             <Box>
-                                {userLoggedInData?.userLoggedIn?.id === data?.group.creatorId ? null : (
+                                {!userLoggedInData?.userLoggedIn?.id ? null : (
                                     <Box>
-                                        {userIdConversion.includes(userLoggedInData?.userLoggedIn?.id) ? (
-                                            <Button
-                                                size='md'
-                                                height='45px'
-                                                width='120px'
-                                                border='2px'
-                                                color='red'
-                                                variant='solid'
-                                                mr={4}
-                                                cursor='no-drop'
-                                            >
-                                                Joined
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                size='md'
-                                                height='45px'
-                                                width='120px'
-                                                border='2px'
-                                                colorScheme='red'
-                                                variant='solid'
-                                                mr={4}
-                                                onClick={async () => {
-                                                    await member({
-                                                        groupId: (data?.group?.id) as number,
-                                                        value: realValue
-                                                    })
-                                                }}
-                                            >
-                                                Join Group
-                                            </Button>
-                                        )}
+                                        {userLoggedInData?.userLoggedIn?.id === data?.group.creatorId ? null : (
+                                            <Box>
+                                                {userIdConversion.includes(userLoggedInData?.userLoggedIn?.id) ? (
+                                                    <Button
+                                                        size='md'
+                                                        height='45px'
+                                                        width='120px'
+                                                        border='2px'
+                                                        color='red'
+                                                        variant='solid'
+                                                        mr={4}
+                                                        cursor='no-drop'
+                                                    >
+                                                        Joined
+                                                    </Button>
+                                                ) : (
+                                                    <Button
+                                                        size='md'
+                                                        height='45px'
+                                                        width='120px'
+                                                        border='2px'
+                                                        colorScheme='red'
+                                                        variant='solid'
+                                                        mr={4}
+                                                        onClick={async () => {
+                                                            await member({
+                                                                groupId: (data?.group?.id) as number,
+                                                                value: realValue
+                                                            })
+                                                            router.reload()
+                                                        }}
+                                                    >
+                                                        Join Group
+                                                    </Button>
+                                                )}
 
+                                            </Box>
+                                        )}
                                     </Box>
                                 )}
+
                             </Box>
                             <Box>
                                 {userLoggedInData?.userLoggedIn?.id !== data?.group.creatorId ? null : (

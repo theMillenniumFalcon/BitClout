@@ -1,5 +1,5 @@
 import { dedupExchange, fetchExchange, stringifyVariables } from "urql"
-import { LoginMutation, LogoutMutation, MemberMutationVariables, RegisterMutation, UserLoggedInDocument, UserLoggedInQuery } from "../generated/graphql"
+import { LoginMutation, LogoutMutation, MemberMutationVariables, RegisterMutation, UserLoggedInDocument, UserLoggedInQuery, VoteMutationVariables } from "../generated/graphql"
 import { betterUpdateQuery } from "./betterUpdateQuery"
 import { cacheExchange } from "@urql/exchange-graphcache"
 import { gql } from '@urql/core';
@@ -33,6 +33,13 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                   }
                 }
               )
+              const allFields = cache.inspectFields("Query")
+              const fieldInfos = allFields.filter(
+                (info) => info.fieldName === "posts"
+              )
+              fieldInfos.forEach((fi) => {
+                cache.invalidate("Query", "posts", fi.arguments)
+              })
             },
             register: (_result, args, cache, info) => {
               betterUpdateQuery<RegisterMutation, UserLoggedInQuery>(
@@ -57,55 +64,37 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
               cache.invalidate({ __typename: "Post", id: (args as any).id })
             },
             vote: (_result, args, cache, info) => {
-              const { postId, value } = args
+              const { postId, value } = args as VoteMutationVariables;
               const data = cache.readFragment(
                 gql`
-              fragment _ on Post {
-                id
-                points
-                voteStatus
-              }
-            `,
-                { id: postId }
-              )
+                  fragment _ on Post {
+                    id
+                    points
+                    voteStatus
+                  }
+                `,
+                { id: postId } as any
+              );
+
               if (data) {
                 if (data.voteStatus === value) {
-                  return
+                  return;
                 }
-                const newPoints = (data.points as number) + (!data.voteStatus ? 1 : 2) * (value as any)
+                const newPoints =
+                  (data.points as number) + (!data.voteStatus ? 1 : 2) * value;
                 cache.writeFragment(
                   gql`
-                fragment __ on Post {
-                  points
-                  voteStatus
-                }
-              `,
-                  { id: postId, points: newPoints, voteStatus: value }
-                )
+                    fragment __ on Post {
+                      points
+                      voteStatus
+                    }
+                  `,
+                  { id: postId, points: newPoints, voteStatus: value } as any
+                );
               }
             },
             member: (_result, args, cache, info) => {
-              const { groupId, value } = args as MemberMutationVariables
-              const data = cache.readFragment(
-                gql`
-                  fragment _ on Group {
-                    id
-                    membersnumber
-                  }
-                `,
-                { id: groupId }
-              )
-              if (data) {
-                const newMembers = (data.membersnumber as number) + value
-                cache.writeFragment(
-                  gql`
-                    fragment __ on Group {
-                      membersnumber
-                    }
-                  `,
-                  { id: groupId, membersnumber: newMembers }
-                )
-              }
+
             },
             createPost: (_result, args, cache, info) => {
               const allFields = cache.inspectFields("Query")
