@@ -1,22 +1,15 @@
+# BitClout
+
+BitClout is a social media application that allows users to create posts, vote on them and join groups in accordance with their interests.
+
 ## Tech and major tools used in this project:
 
-- React
-- Typescript
-- GraphQL
-- Apollo
-- Node.js
-- PostgreSQL
-- TypeORM
-- Redis
-- Next.js
-- TypeGraphQL
-- Node-argon2
-- GraphQL Code Generator
-- Joi
-
-# BitCLout
-
-Random Paragraph
+- React and Next.js are used in the frontend using typescript.
+- PostgreSQL is used as a database.
+- TypeORM is the oPRM in this project.
+- Redis is used as a cache store.
+- A node based backend is developed using graphQL to serve as the server.
+- URQL is used to transfer data between the server and the UI.
 
 ## Deployment
 
@@ -66,7 +59,6 @@ npm run build
     ├── graphql                 # GraphQL queries and mutations
     ├── pages                   # nextJS pages
     ├── public                  # assets
-    ├── styles                  # CSS files
     └── ...
 
 ### server src Structure
