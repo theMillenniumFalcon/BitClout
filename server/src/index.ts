@@ -1,4 +1,5 @@
 import "reflect-metadata"
+import 'dotenv-safe/config'
 import express from 'express'
 import { ApolloServer } from 'apollo-server-express'
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core"
@@ -21,15 +22,13 @@ import { Group } from "./entities/Group"
 import { GroupResolver } from "./resolvers/group"
 import { Member } from "./entities/Member"
 
-const PORT = 4000
+const PORT = parseInt(process.env.PORT)
 
 const main = async () => {
 
     const connection = await createConnection({
         type: "postgres",
-        username: "postgres",
-        password: "postgres",
-        database: "bitclout",
+        url: process.env.DATABASE_URL,
         logging: true,
         synchronize: false,
         migrations: [path.join(__dirname, "./migrations/*")],
@@ -38,20 +37,15 @@ const main = async () => {
 
     await connection.runMigrations()
 
-    // await User.delete({})
-    // await Post.delete({})
-    // await Upvote.delete({})
-    // await Group.delete({})
-
     const app = express()
 
     const RedisStore = connnectRedis(session)
-    const redis = new Redis()
+    const redis = new Redis(process.env.REDIS_URL)
 
     app.set("trust proxy", 1)
 
     app.use(cors({
-        origin: 'http://localhost:3000',
+        origin: process.env.CORS_ORIGIN,
         credentials: true
     }))
     
@@ -65,10 +59,10 @@ const main = async () => {
             maxAge: 1000*60*60*24*365*10,
             httpOnly: true,
             sameSite: 'lax', // * csrf
-            secure: __prod__ // * cookie only works in https
+            secure: __prod__, // * cookie only works in https
         },
         saveUninitialized: false,
-        secret: "asdfghjklqwertyuiopasdfghjkl",
+        secret: process.env.SESSION_SECRET,
         resave: false,
     }))
 
