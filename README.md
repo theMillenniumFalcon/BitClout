@@ -6,42 +6,77 @@ BitClout is a social media application that allows users to create posts, vote o
 
 - React and Next.js are used in the frontend using typescript.
 - PostgreSQL is used as a database.
-- TypeORM is the oPRM in this project.
+- TypeORM is the ORM in this project.
 - Redis is used as a cache store.
 - A node based backend is developed using graphQL to serve as the server.
 - URQL is used to transfer data between the server and the UI.
 
-## Deployment
+## Config / Secrets environment variables
 
-You can find sandbox deployment at https://sandbox.codeforcause.org
+Copy `.env.example` from the server folder to `.env` and add your private information
 
-## Build Setup
+*Note: never commit this file, it should be ignored by Git*
+
+```
+DATABASE_URL=
+REDIS_URL=
+PORT=
+SESSION_SECRET=
+CORS_ORIGIN=
+```
+
+## Installation
+
+### SSH
+
+```bash
+$ git clone git@github.com:theMillenniumFalcon/BitClout.git
+```
+
+### GitHub CLI
+
+```bash
+$ gh repo clone theMillenniumFalcon/BitClout
+```
+
+### HTTPS
+
+```bash
+$ git clone https://github.com/theMillenniumFalcon/BitClout
+```
+
+
+```bash
+$ cd client
+$ npm install
+```
+
+```bash
+$ cd server
+$ npm install
+```
+
+## Running the app
 
 ### For client
 ```bash
-# install dependencies
-npm install
+# development
+$ npm run dev
 
-# development run
-npm run dev
-
-# build for production
-npm run build
+# production mode
+$ npm run build
 ```
 
 ### For server
 ```bash
-# install dependencies
-npm install
+# watch mode
+$ npm run watch
 
-# compile to javascript
-npm run watch
+# development
+$ npm run dev
 
-# development run
-npm run dev
-
-# build for production
-npm run build
+# production mode
+$ npm run build
 ```
 
 ## Project Structure
@@ -54,9 +89,8 @@ npm run build
 
 ### client
     .
-    ├── .next                   # Internal nextJS files
     ├── generated               # Typescript hooks generated using graphQL
-    ├── graphql                 # GraphQL queries and mutations
+    ├── graphql                 # GraphQL files
     ├── pages                   # nextJS pages
     ├── public                  # assets
     └── ...
@@ -72,3 +106,7 @@ npm run build
     |   ├── index.ts            # Starting point
     │   └── ...
     └── ...
+
+### I have another question!
+
+Feel free to ask us on [Twitter](https://twitter.com/nishankstwt)! You can also email us at nishankpr2002@gmail.com.
